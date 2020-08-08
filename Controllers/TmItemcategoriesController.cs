@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReactPPD.Model;
-
+using ReactPPD.VM;
 namespace ReactPPD.Controllers
 {
     [EnableCors("*", "*", "*")]
@@ -231,7 +231,7 @@ namespace ReactPPD.Controllers
         // PUT: api/TmItemcategories/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
+      /*  [HttpPut("{id}")]
         public async Task<IActionResult> PutTmItemcategory(string id, TmItemcategory tmItemcategory)
         {
             if (id != tmItemcategory.CatgyCode)
@@ -258,36 +258,63 @@ namespace ReactPPD.Controllers
             }
 
             return NoContent();
-        }
+        }*/
 
         // POST: api/TmItemcategories
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPost("InsertItemCategory")]
-        public async Task<ActionResult<TmItemcategory>> PostTmItemcategory(TmItemcategory tmItemcategory)
+        [HttpPost("SaveUpdate")]
+        public async Task<ActionResult<Response>> PostTmItemcategory(string catgycode,TmItemcategory tmItemcategory)
         {
-            _context.TmItemcategory.Add(tmItemcategory);
-            try
+            if (catgycode != tmItemcategory.CatgyCode)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (TmItemcategoryExists(tmItemcategory.CatgyCode))
+                _context.TmItemcategory.Add(tmItemcategory);
+                try
                 {
-                    return Conflict();
+                    await _context.SaveChangesAsync();
                 }
-                else
+                catch (DbUpdateException)
                 {
-                    throw;
+                    if (TmItemcategoryExists(tmItemcategory.CatgyCode))
+                    {
+                        return new Response { Status = "Conflict", Message = "Record Already Exist" };
+                    }
                 }
-            }
+                return new Response { Status = "SUCCESSFULL", Message = "SAVED SUCCESSFULLY" };
 
-            return CreatedAtAction("GetTmItemcategory", new { id = tmItemcategory.CatgyCode }, tmItemcategory);
+            }
+            else if (catgycode == tmItemcategory.CatgyCode)
+            {
+                /* {
+                     return BadRequest();
+                 }*/
+
+                _context.Entry(tmItemcategory).State = EntityState.Modified;
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!TmItemcategoryExists(catgycode))
+                    {
+
+                        return new Response { Status = "NotFound", Message = "Record Not Found" };
+                    }
+                    /* else
+                     {
+                         throw;
+                     }*/
+                }
+
+                return new Response { Status = "Updated", Message = "Record Updated Sucessfull" };
+            }
+            return null;
         }
 
         // DELETE: api/TmItemcategories/5
-        [HttpDelete("{id}")]
+       /* [HttpDelete("{id}")]
         public async Task<ActionResult<TmItemcategory>> DeleteTmItemcategory(string id)
         {
             var tmItemcategory = await _context.TmItemcategory.FindAsync(id);
@@ -300,7 +327,7 @@ namespace ReactPPD.Controllers
             await _context.SaveChangesAsync();
 
             return tmItemcategory;
-        }
+        }*/
 
         private bool TmItemcategoryExists(string id)
         {

@@ -13,6 +13,7 @@ using Newtonsoft.Json.Linq;
 using Microsoft.Net.Http.Headers;
 using System.Net;
 using System.Net.Http;
+using ReactPPD.VM;
 
 namespace ReactPPD.Controllers
 {
@@ -764,43 +765,74 @@ namespace ReactPPD.Controllers
         // POST: api/TmItems
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPost("InsertData")]
-        public async Task<ActionResult<TmItem>> PostTmItem(string branchcode,int acyear,string section,string gradesection,string sectionname,[FromBody]TmItem tmItem)
+        [HttpPost("SaveUpdate")]
+        public async Task<ActionResult<Response>> PostTmItem(string branchcode, int acyear, string section, string gradesection, string sectionname, string itemcode, TmItem tmItem)
         {
-            _context.TmItem.Add(tmItem);
-            if (tmItem.ItemType.StartsWith("Ch") || tmItem.ItemType.StartsWith("FC"))
+            if (itemcode != tmItem.ItemCode)
             {
-                TmMeats tmmeats = new TmMeats();
-                tmmeats.MeatsCode = tmItem.ItemCode;
-                tmmeats.MeatsName = tmItem.ItemName;
-                tmmeats.BranchCode = branchcode;
-                tmmeats.AcYearNo = acyear;
-                tmmeats.IsActive = tmItem.IsActive;
-                tmmeats.Uom = tmItem.UomPur;
-                tmmeats.Section = section;
-                tmmeats.GradeSection = gradesection;
-                tmmeats.SectionName = sectionname;
-                _context.TmMeats.Add(tmmeats);
+                _context.TmItem.Add(tmItem);
+                if (tmItem.ItemType.StartsWith("Ch") || tmItem.ItemType.StartsWith("FC"))
+                {
+                    TmMeats tmmeats = new TmMeats();
+                    tmmeats.MeatsCode = tmItem.ItemCode;
+                    tmmeats.MeatsName = tmItem.ItemName;
+                    tmmeats.BranchCode = branchcode;
+                    tmmeats.AcYearNo = acyear;
+                    tmmeats.IsActive = tmItem.IsActive;
+                    tmmeats.Uom = tmItem.UomPur;
+                    tmmeats.Section = section;
+                    tmmeats.GradeSection = gradesection;
+                    tmmeats.SectionName = sectionname;
+                    _context.TmMeats.Add(tmmeats);
+                }
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateException)
+                {
+                    if (TmItemExists(tmItem.ItemCode))
+                    {
+                        return new Response { Status = "Conflict", Message = "Record Already Exist" };
+                    }
+                }
+
+                return new Response { Status = "SUCCESSFULL", Message = "SAVED SUCCESSFULLY" };
             }
+            else if (itemcode != tmItem.ItemCode)
+            {
+                if (tmItem.ItemType.StartsWith("Ch") || tmItem.ItemType.StartsWith("FC"))
+                {
+                    TmMeats tmmeats = new TmMeats();
+                    tmmeats.MeatsName = tmItem.ItemName;
+                    tmmeats.Uom = tmItem.UomPur;
+                    tmmeats.Section = section;
+                    tmmeats.GradeSection = gradesection;
+                    tmmeats.SectionName = sectionname;
+
+                    _context.Entry(tmmeats).State = EntityState.Modified;
+
+                }
+                    _context.Entry(tmItem).State = EntityState.Modified;
+
+
             try
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException)
+            catch (DbUpdateConcurrencyException)
             {
-                if (TmItemExists(tmItem.ItemCode))
+                if (!TmItemExists(itemcode))
                 {
-                    return Conflict();
+                    return new Response { Status = "NotFound", Message = "Record Not Found" };
                 }
-                else
-                {
-                    throw;
-                }
+                
             }
 
-            return CreatedAtAction("GetTmItem", new { id = tmItem.ItemCode }, tmItem);
+            return new Response { Status = "Updated", Message = "Record Updated Sucessfull" }; 
+            }
+            return null;
         }
-
         // DELETE: api/TmItems/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<TmItem>> DeleteTmItem(string id)
