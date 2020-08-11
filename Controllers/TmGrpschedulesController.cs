@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web.Http.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using ReactPPD.Model;
 using ReactPPD.VM;
 namespace ReactPPD.Controllers
 {
+    [EnableCors("*", "*", "*")]
     [Route("api/[controller]")]
     [ApiController]
     public class TmGrpschedulesController : ControllerBase

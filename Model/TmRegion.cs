@@ -11,6 +11,7 @@ namespace ReactPPD.Model
         public TmRegion()
         {
             TmCostcenter = new HashSet<TmCostcenter>();
+            TmRegionmap = new HashSet<TmRegionmap>();
             TmUser = new HashSet<TmUser>();
             TmUserdefault = new HashSet<TmUserdefault>();
             TmZone = new HashSet<TmZone>();
@@ -45,6 +46,8 @@ namespace ReactPPD.Model
         public virtual TmBranch RobrCodeNavigation { get; set; }
         [InverseProperty("RegionCodeNavigation")]
         public virtual ICollection<TmCostcenter> TmCostcenter { get; set; }
+        [InverseProperty("RegionCodeNavigation")]
+        public virtual ICollection<TmRegionmap> TmRegionmap { get; set; }
         [InverseProperty("ReigionCodeNavigation")]
         public virtual ICollection<TmUser> TmUser { get; set; }
         [InverseProperty("RegionCodeNavigation")]

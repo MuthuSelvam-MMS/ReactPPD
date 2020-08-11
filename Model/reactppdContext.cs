@@ -5,12 +5,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 namespace ReactPPD.Model
 {
     public partial class reactppdContext : DbContext
-    {
+    {    
         public reactppdContext(DbContextOptions<reactppdContext> options)
             : base(options)
         {
         }
 
+        public virtual DbSet<TmAcbrmap> TmAcbrmap { get; set; }
         public virtual DbSet<TmAccounts> TmAccounts { get; set; }
         public virtual DbSet<TmAccountsdetail> TmAccountsdetail { get; set; }
         public virtual DbSet<TmAcgroup> TmAcgroup { get; set; }
@@ -34,17 +35,88 @@ namespace ReactPPD.Model
         public virtual DbSet<TmPlace> TmPlace { get; set; }
         public virtual DbSet<TmProdnature> TmProdnature { get; set; }
         public virtual DbSet<TmRegion> TmRegion { get; set; }
+        public virtual DbSet<TmRegionmap> TmRegionmap { get; set; }
         public virtual DbSet<TmRegzone> TmRegzone { get; set; }
+        public virtual DbSet<TmRegzonemap> TmRegzonemap { get; set; }
         public virtual DbSet<TmUom> TmUom { get; set; }
         public virtual DbSet<TmUser> TmUser { get; set; }
         public virtual DbSet<TmUserdefault> TmUserdefault { get; set; }
         public virtual DbSet<TmUserright> TmUserright { get; set; }
         public virtual DbSet<TmVendor> TmVendor { get; set; }
         public virtual DbSet<TmZone> TmZone { get; set; }
-        public virtual DbSet<TtShedready> TtShedready { get; set; }     
+        public virtual DbSet<TtShedready> TtShedready { get; set; }      
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<TmAcbrmap>(entity =>
+            {
+                entity.HasKey(e => new { e.BranchCode, e.AccountCode })
+                    .HasName("PRIMARY");
+
+                entity.HasIndex(e => e.AccountName)
+                    .HasName("FK_AcBrMapAcName");
+
+                entity.HasIndex(e => new { e.AccountCode, e.Actype })
+                    .HasName("FK_AcBrMapAcType");
+
+                entity.Property(e => e.BranchCode).IsUnicode(false);
+
+                entity.Property(e => e.AccountCode).IsUnicode(false);
+
+                entity.Property(e => e.AccountName).IsUnicode(false);
+
+                entity.Property(e => e.Actype).IsUnicode(false);
+
+                entity.Property(e => e.BrShortName).IsUnicode(false);
+
+                entity.Property(e => e.BroSal)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.Property(e => e.IsActive)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'A'");
+
+                entity.Property(e => e.IsBudgetable)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.Property(e => e.IsTrans)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.HasOne(d => d.AccountCodeNavigation)
+                    .WithMany(p => p.TmAcbrmapAccountCodeNavigation)
+                    .HasForeignKey(d => d.AccountCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_AcBrMap");
+
+                entity.HasOne(d => d.AccountCode1)
+                    .WithMany(p => p.TmAcbrmap)
+                    .HasForeignKey(d => d.AccountCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_AcBrMapAcDtl");
+
+                entity.HasOne(d => d.AccountNameNavigation)
+                    .WithMany(p => p.TmAcbrmapAccountNameNavigation)
+                    .HasPrincipalKey(p => p.AccountName)
+                    .HasForeignKey(d => d.AccountName)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_AcBrMapAcName");
+
+                entity.HasOne(d => d.BranchCodeNavigation)
+                    .WithMany(p => p.TmAcbrmap)
+                    .HasForeignKey(d => d.BranchCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FKAcBrMapBranch");
+
+                entity.HasOne(d => d.Ac)
+                    .WithMany(p => p.TmAcbrmapAc)
+                    .HasPrincipalKey(p => new { p.AccountCode, p.AcType })
+                    .HasForeignKey(d => new { d.AccountCode, d.Actype })
+                    .HasConstraintName("FK_AcBrMapAcType");
+            });
+
             modelBuilder.Entity<TmAccounts>(entity =>
             {
                 entity.HasKey(e => e.AccountCode)
@@ -60,12 +132,12 @@ namespace ReactPPD.Model
                 entity.HasIndex(e => e.ConsGrpCodeDr)
                     .HasName("FK_AccountsConsGrpCodeDr");
 
-                entity.HasIndex(e => new { e.AcType, e.AccountCode })
-                    .HasName("UK_AccountsAcType")
-                    .IsUnique();
-
                 entity.HasIndex(e => new { e.AccNature, e.AccountCode })
                     .HasName("UK_AccountsAccNature")
+                    .IsUnique();
+
+                entity.HasIndex(e => new { e.AccountCode, e.AcType })
+                    .HasName("UK_AccountsAcType")
                     .IsUnique();
 
                 entity.HasIndex(e => new { e.AccountName, e.AccountCode })
@@ -793,14 +865,17 @@ namespace ReactPPD.Model
 
             modelBuilder.Entity<TmCompany>(entity =>
             {
-                entity.HasKey(e => e.CompanyCodeVarchar)
+                entity.HasKey(e => e.CompanyCode)
                     .HasName("PRIMARY");
 
                 entity.HasIndex(e => e.CompanyName)
                     .HasName("CompanyName")
                     .IsUnique();
 
-                entity.Property(e => e.CompanyCodeVarchar).IsUnicode(false);
+                entity.HasIndex(e => e.GcacCode)
+                    .HasName("FKCompanyGcacCode");
+
+                entity.Property(e => e.CompanyCode).IsUnicode(false);
 
                 entity.Property(e => e.AdminOffAdd1).IsUnicode(false);
 
@@ -832,6 +907,10 @@ namespace ReactPPD.Model
 
                 entity.Property(e => e.GcacCode).IsUnicode(false);
 
+                entity.Property(e => e.IsActive)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'A'");
+
                 entity.Property(e => e.ItCircle).IsUnicode(false);
 
                 entity.Property(e => e.LstNo).IsUnicode(false);
@@ -840,11 +919,37 @@ namespace ReactPPD.Model
 
                 entity.Property(e => e.MobileNo).IsUnicode(false);
 
+                entity.Property(e => e.Page1).HasDefaultValueSql("'7'");
+
+                entity.Property(e => e.Page2).HasDefaultValueSql("'14'");
+
+                entity.Property(e => e.Page3).HasDefaultValueSql("'21'");
+
+                entity.Property(e => e.Page4).HasDefaultValueSql("'30'");
+
+                entity.Property(e => e.Page5).HasDefaultValueSql("'60'");
+
+                entity.Property(e => e.Page6).HasDefaultValueSql("'90'");
+
+                entity.Property(e => e.PanNo).IsUnicode(false);
+
                 entity.Property(e => e.PhoneNo).IsUnicode(false);
 
                 entity.Property(e => e.PinCode)
                     .IsUnicode(false)
                     .HasDefaultValueSql("'NONEZ'");
+
+                entity.Property(e => e.Rage1).HasDefaultValueSql("'7'");
+
+                entity.Property(e => e.Rage2).HasDefaultValueSql("'14'");
+
+                entity.Property(e => e.Rage3).HasDefaultValueSql("'21'");
+
+                entity.Property(e => e.Rage4).HasDefaultValueSql("'30'");
+
+                entity.Property(e => e.Rage5).HasDefaultValueSql("'60'");
+
+                entity.Property(e => e.Rage6).HasDefaultValueSql("'90'");
 
                 entity.Property(e => e.ShortName).IsUnicode(false);
 
@@ -857,6 +962,14 @@ namespace ReactPPD.Model
                     .HasDefaultValueSql("'NONEM'");
 
                 entity.Property(e => e.VatNo).IsUnicode(false);
+
+                entity.Property(e => e.WebSite).IsUnicode(false);
+
+                entity.HasOne(d => d.GcacCodeNavigation)
+                    .WithMany(p => p.TmCompany)
+                    .HasForeignKey(d => d.GcacCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FKCompanyGcacCode");
             });
 
             modelBuilder.Entity<TmCostcenter>(entity =>
@@ -2087,6 +2200,59 @@ namespace ReactPPD.Model
                     .HasConstraintName("RegionRoBr");
             });
 
+            modelBuilder.Entity<TmRegionmap>(entity =>
+            {
+                entity.HasKey(e => new { e.RegionCode, e.DivCode })
+                    .HasName("PRIMARY");
+
+                entity.HasIndex(e => e.CompanyCode)
+                    .HasName("FK_RegionMapCompany");
+
+                entity.HasIndex(e => e.DivCode)
+                    .HasName("FK_RegionMapDiv");
+
+                entity.HasIndex(e => e.RegZoneCode)
+                    .HasName("FK_RegionMapRz");
+
+                entity.HasIndex(e => new { e.RegionCode, e.DivCode, e.CompanyCode, e.RegZoneCode, e.IsActive })
+                    .HasName("UK_RegionMap")
+                    .IsUnique();
+
+                entity.Property(e => e.RegionCode).IsUnicode(false);
+
+                entity.Property(e => e.DivCode).IsUnicode(false);
+
+                entity.Property(e => e.CompanyCode).IsUnicode(false);
+
+                entity.Property(e => e.IsActive)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'A'");
+
+                entity.Property(e => e.RegZoneCode).IsUnicode(false);
+
+                entity.HasOne(d => d.CompanyCodeNavigation)
+                    .WithMany(p => p.TmRegionmap)
+                    .HasForeignKey(d => d.CompanyCode)
+                    .HasConstraintName("FK_RegionMapCompany");
+
+                entity.HasOne(d => d.DivCodeNavigation)
+                    .WithMany(p => p.TmRegionmap)
+                    .HasForeignKey(d => d.DivCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_RegionMapDiv");
+
+                entity.HasOne(d => d.RegZoneCodeNavigation)
+                    .WithMany(p => p.TmRegionmap)
+                    .HasForeignKey(d => d.RegZoneCode)
+                    .HasConstraintName("FK_RegionMapRz");
+
+                entity.HasOne(d => d.RegionCodeNavigation)
+                    .WithMany(p => p.TmRegionmap)
+                    .HasForeignKey(d => d.RegionCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_RegionMapReg");
+            });
+
             modelBuilder.Entity<TmRegzone>(entity =>
             {
                 entity.HasKey(e => e.RegZoneCode)
@@ -2135,6 +2301,46 @@ namespace ReactPPD.Model
                 entity.Property(e => e.RegZoneName).IsUnicode(false);
 
                 entity.Property(e => e.ShortName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TmRegzonemap>(entity =>
+            {
+                entity.HasKey(e => new { e.RegZoneCode, e.CompanyCode, e.IsActive, e.DivCode })
+                    .HasName("PRIMARY");
+
+                entity.HasIndex(e => e.CompanyCode)
+                    .HasName("FK_RegZoneMapCom");
+
+                entity.HasIndex(e => e.DivCode)
+                    .HasName("FK_RegZoneMapDiv");
+
+                entity.Property(e => e.RegZoneCode).IsUnicode(false);
+
+                entity.Property(e => e.CompanyCode).IsUnicode(false);
+
+                entity.Property(e => e.IsActive)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'A'");
+
+                entity.Property(e => e.DivCode).IsUnicode(false);
+
+                entity.HasOne(d => d.CompanyCodeNavigation)
+                    .WithMany(p => p.TmRegzonemap)
+                    .HasForeignKey(d => d.CompanyCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_RegZoneMapCom");
+
+                entity.HasOne(d => d.DivCodeNavigation)
+                    .WithMany(p => p.TmRegzonemap)
+                    .HasForeignKey(d => d.DivCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_RegZoneMapDiv");
+
+                entity.HasOne(d => d.RegZoneCodeNavigation)
+                    .WithMany(p => p.TmRegzonemap)
+                    .HasForeignKey(d => d.RegZoneCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_RegZoneMapRz");
             });
 
             modelBuilder.Entity<TmUom>(entity =>

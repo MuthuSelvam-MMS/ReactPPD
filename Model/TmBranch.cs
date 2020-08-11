@@ -10,6 +10,7 @@ namespace ReactPPD.Model
     {
         public TmBranch()
         {
+            TmAcbrmap = new HashSet<TmAcbrmap>();
             TmEmployeeBranchCodeNavigation = new HashSet<TmEmployee>();
             TmEmployeeSubBrCodeNavigation = new HashSet<TmEmployee>();
             TmRegion = new HashSet<TmRegion>();
@@ -152,6 +153,8 @@ namespace ReactPPD.Model
         [StringLength(20)]
         public string PanNo { get; set; }
 
+        [InverseProperty("BranchCodeNavigation")]
+        public virtual ICollection<TmAcbrmap> TmAcbrmap { get; set; }
         [InverseProperty(nameof(TmEmployee.BranchCodeNavigation))]
         public virtual ICollection<TmEmployee> TmEmployeeBranchCodeNavigation { get; set; }
         [InverseProperty(nameof(TmEmployee.SubBrCodeNavigation))]

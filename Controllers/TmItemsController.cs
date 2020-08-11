@@ -67,7 +67,7 @@ namespace ReactPPD.Controllers
         // GET: api/TmItems/5
 
         [HttpPost("ItemName")]
-        public async Task<ActionResult<IEnumerable<TmItem>>> GetTmItem(string Itemname)
+        public async Task<ActionResult<List<Item>>> GetTmItem(string Itemname)
         {
             try
             {
@@ -76,7 +76,7 @@ namespace ReactPPD.Controllers
                     var tmItem = await _context.TmItem                              
                                 .Where(i => i.IsActive == "A")
                                 .OrderBy(i => i.ItemName)
-                                .Select(i => new TmItem { ItemCode = i.ItemCode, ItemName = i.ItemName })
+                                .Select(i => new Item {ItemCode = i.ItemCode, ItemName = i.ItemName })
                                 .ToListAsync();
 
 
@@ -98,7 +98,7 @@ namespace ReactPPD.Controllers
                                 .Where(i => i.ItemName.StartsWith(Itemname))
                                 .Where(i => i.IsActive == "A")
                                 .OrderBy(i => i.ItemName)
-                                .Select(i => new TmItem { ItemCode = i.ItemCode, ItemName = i.ItemName })
+                                .Select(i => new Item{ ItemCode = i.ItemCode, ItemName = i.ItemName })
                                 .ToListAsync();
 
 

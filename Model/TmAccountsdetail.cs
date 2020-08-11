@@ -10,6 +10,7 @@ namespace ReactPPD.Model
     {
         public TmAccountsdetail()
         {
+            TmAcbrmap = new HashSet<TmAcbrmap>();
             TmVendor = new HashSet<TmVendor>();
         }
 
@@ -105,6 +106,8 @@ namespace ReactPPD.Model
         [ForeignKey(nameof(AccountCode))]
         [InverseProperty(nameof(TmAccounts.TmAccountsdetail))]
         public virtual TmAccounts AccountCodeNavigation { get; set; }
+        [InverseProperty("AccountCode1")]
+        public virtual ICollection<TmAcbrmap> TmAcbrmap { get; set; }
         [InverseProperty("AccountCode1")]
         public virtual ICollection<TmVendor> TmVendor { get; set; }
     }

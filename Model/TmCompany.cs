@@ -8,31 +8,49 @@ namespace ReactPPD.Model
     [Table("tm_company")]
     public partial class TmCompany
     {
+        public TmCompany()
+        {
+            TmRegionmap = new HashSet<TmRegionmap>();
+            TmRegzonemap = new HashSet<TmRegzonemap>();
+        }
+
         [Key]
         [StringLength(10)]
-        public string CompanyCodeVarchar { get; set; }
+        public string CompanyCode { get; set; }
+        [Required]
         [StringLength(60)]
         public string CompanyName { get; set; }
+        [Required]
         [StringLength(7)]
         public string ShortName { get; set; }
+        [Required]
         [StringLength(12)]
         public string GcacCode { get; set; }
+        [Required]
         [StringLength(35)]
         public string AdminOffAdd1 { get; set; }
+        [Required]
         [StringLength(35)]
         public string AdminOffAdd2 { get; set; }
+        [Required]
         [StringLength(35)]
         public string AdminOffAdd3 { get; set; }
+        [Required]
         [StringLength(10)]
         public string PinCode { get; set; }
+        [Required]
         [StringLength(10)]
         public string CityCode { get; set; }
+        [Required]
         [StringLength(10)]
         public string TalukCode { get; set; }
+        [Required]
         [StringLength(10)]
         public string DistCode { get; set; }
+        [Required]
         [StringLength(10)]
         public string StateCode { get; set; }
+        [Required]
         [StringLength(10)]
         public string CountryCode { get; set; }
         [StringLength(30)]
@@ -61,5 +79,44 @@ namespace ReactPPD.Model
         public string ItCircle { get; set; }
         [StringLength(20)]
         public string CeNo { get; set; }
+        [StringLength(20)]
+        public string PanNo { get; set; }
+        [StringLength(50)]
+        public string WebSite { get; set; }
+        [Column(TypeName = "int(5)")]
+        public int Rage1 { get; set; }
+        [Column(TypeName = "int(5)")]
+        public int Rage2 { get; set; }
+        [Column(TypeName = "int(5)")]
+        public int Rage3 { get; set; }
+        [Column(TypeName = "int(5)")]
+        public int Rage4 { get; set; }
+        [Column(TypeName = "int(5)")]
+        public int Rage5 { get; set; }
+        [Column(TypeName = "int(5)")]
+        public int Rage6 { get; set; }
+        [Column(TypeName = "int(5)")]
+        public int Page1 { get; set; }
+        [Column(TypeName = "int(5)")]
+        public int Page2 { get; set; }
+        [Column(TypeName = "int(5)")]
+        public int Page3 { get; set; }
+        [Column(TypeName = "int(5)")]
+        public int Page4 { get; set; }
+        [Column(TypeName = "int(5)")]
+        public int Page5 { get; set; }
+        [Column(TypeName = "int(5)")]
+        public int Page6 { get; set; }
+        [Required]
+        [StringLength(1)]
+        public string IsActive { get; set; }
+
+        [ForeignKey(nameof(GcacCode))]
+        [InverseProperty(nameof(TmAccounts.TmCompany))]
+        public virtual TmAccounts GcacCodeNavigation { get; set; }
+        [InverseProperty("CompanyCodeNavigation")]
+        public virtual ICollection<TmRegionmap> TmRegionmap { get; set; }
+        [InverseProperty("CompanyCodeNavigation")]
+        public virtual ICollection<TmRegzonemap> TmRegzonemap { get; set; }
     }
 }
