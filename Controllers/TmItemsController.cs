@@ -123,7 +123,7 @@ namespace ReactPPD.Controllers
        }
 
         [HttpPost("ParentItemCode")]
-        public async Task<ActionResult<IEnumerable<TmItem>>> GetTmParentItemCode(string ItemName)
+        public async Task<ActionResult<List<Item>>> GetTmParentItemCode(string ItemName)
         {
             try
             {
@@ -132,7 +132,7 @@ namespace ReactPPD.Controllers
                     var tmItem = await _context.TmItem                              
                                 .Where(i => i.IsActive == "A")
                                 .OrderBy(i => i.ItemName)
-                                .Select(i => new TmItem { ItemCode = i.ItemCode, ItemName = i.ItemName })
+                                .Select(i => new Item { ItemCode = i.ItemCode, ItemName = i.ItemName })
                                 .ToListAsync();
                     if (tmItem.Count == 0)
                     {
@@ -151,7 +151,7 @@ namespace ReactPPD.Controllers
                                 .Where(i => i.ItemName.StartsWith(ItemName))
                                 .Where(i => i.IsActive == "A")
                                 .OrderBy(i => i.ItemName)
-                                .Select(i => new TmItem { ItemCode = i.ItemCode, ItemName = i.ItemName })
+                                .Select(i => new Item { ItemCode = i.ItemCode, ItemName = i.ItemName })
                                 .ToListAsync();
                     if (tmItem.Count == 0)
                     {
@@ -174,7 +174,7 @@ namespace ReactPPD.Controllers
         }
 
         [HttpPost("ContainerCode1")]
-        public async Task<ActionResult<IEnumerable<TmItem>>> GetTmContainerCode1(string ItemName)
+        public async Task<ActionResult<List<Item>>> GetTmContainerCode1(string ItemName)
         {
             try {
                 if (ItemName == null)
@@ -183,7 +183,7 @@ namespace ReactPPD.Controllers
                                 .Where(i => i.IsActive == "A")
                                 .Where(i => i.ItemType == "NP")
                                 .OrderBy(i => i.ItemName)
-                                .Select(i => new TmItem { ItemCode = i.ItemCode, ItemName = i.ItemName })
+                                .Select(i => new Item { ItemCode = i.ItemCode, ItemName = i.ItemName })
                                 .ToListAsync();
 
                     if (tmItem.Count == 0)
@@ -204,7 +204,7 @@ namespace ReactPPD.Controllers
                                 .Where(i => i.IsActive == "A")
                                 .Where(i => i.ItemType == "NP")
                                 .OrderBy(i => i.ItemName)
-                                .Select(i => new TmItem { ItemCode = i.ItemCode, ItemName = i.ItemName })
+                                .Select(i => new Item { ItemCode = i.ItemCode, ItemName = i.ItemName })
                                 .ToListAsync();
 
                     if (tmItem.Count == 0)
@@ -228,7 +228,7 @@ namespace ReactPPD.Controllers
         }
        
         [HttpPost("ContainerCode2")]
-        public async Task<ActionResult<IEnumerable<TmItem>>> GetTmContainerCode2(string ItemName)
+        public async Task<ActionResult<List<Item>>> GetTmContainerCode2(string ItemName)
         {
             try
             {
@@ -238,7 +238,7 @@ namespace ReactPPD.Controllers
                                  .Where(i => i.IsActive == "A")
                                  .Where(i => i.ItemType == "NP")
                                  .OrderBy(i => i.ItemName)
-                                 .Select(i => new TmItem { ItemCode = i.ItemCode, ItemName = i.ItemName })
+                                 .Select(i => new Item { ItemCode = i.ItemCode, ItemName = i.ItemName })
                                  .ToListAsync();
 
                     if (tmItem.Count == 0)
@@ -259,7 +259,7 @@ namespace ReactPPD.Controllers
                                 .Where(i => i.IsActive == "A")
                                 .Where(i => i.ItemType == "NP")
                                 .OrderBy(i => i.ItemName)
-                                .Select(i => new TmItem { ItemCode = i.ItemCode, ItemName = i.ItemName })
+                                .Select(i => new Item { ItemCode = i.ItemCode, ItemName = i.ItemName })
                                 .ToListAsync();
 
                     if (tmItem.Count == 0)
@@ -284,7 +284,7 @@ namespace ReactPPD.Controllers
 
        
         [HttpPost("PREMIXCODE1")]
-        public async Task<ActionResult<IEnumerable<TmItem>>> GetTmPremixCode1(string ItemName)
+        public async Task<ActionResult<List<Item>>> GetTmPremixCode1(string ItemName)
         {
             try {
                 if (ItemName == null)
@@ -293,7 +293,7 @@ namespace ReactPPD.Controllers
                                  .Where(i => i.IsActive == "A")
                                  .Where(i => i.ItemType == "FX")
                                  .OrderBy(i => i.ItemName)
-                                 .Select(i => new TmItem { ItemCode = i.ItemCode, ItemName = i.ItemName })
+                                 .Select(i => new Item { ItemCode = i.ItemCode, ItemName = i.ItemName })
                                  .ToListAsync();
 
                     if (tmItem.Count == 0)
@@ -314,7 +314,7 @@ namespace ReactPPD.Controllers
                                 .Where(i => i.IsActive == "A")
                                 .Where(i => i.ItemType == "FX")
                                 .OrderBy(i => i.ItemName)
-                                .Select(i => new TmItem { ItemCode = i.ItemCode, ItemName = i.ItemName })
+                                .Select(i => new Item { ItemCode = i.ItemCode, ItemName = i.ItemName })
                                 .ToListAsync();
 
                     if (tmItem.Count == 0)
@@ -338,7 +338,7 @@ namespace ReactPPD.Controllers
         }
         
         [HttpPost("PREMIXCODE2")]
-        public async Task<ActionResult<IEnumerable<TmItem>>> GetTmPremixCode2(string ItemName)
+        public async Task<ActionResult<List<Item>>> GetTmPremixCode2(string ItemName)
         {
             try { if (ItemName == null)
                 {
@@ -346,7 +346,7 @@ namespace ReactPPD.Controllers
                                  .Where(i => i.IsActive == "A")
                                  .Where(i => i.ItemType == "FX")
                                  .OrderBy(i => i.ItemName)
-                                 .Select(i => new TmItem { ItemCode = i.ItemCode, ItemName = i.ItemName })
+                                 .Select(i => new Item { ItemCode = i.ItemCode, ItemName = i.ItemName })
                                  .ToListAsync();
 
 
@@ -368,7 +368,7 @@ namespace ReactPPD.Controllers
                                 .Where(i => i.IsActive == "A")
                                 .Where(i => i.ItemType == "FX")
                                 .OrderBy(i => i.ItemName)
-                                .Select(i => new TmItem { ItemCode = i.ItemCode, ItemName = i.ItemName })
+                                .Select(i => new Item { ItemCode = i.ItemCode, ItemName = i.ItemName })
                                 .ToListAsync();
 
 
@@ -392,7 +392,7 @@ namespace ReactPPD.Controllers
             }
         }
         [HttpPost("ItemType")]
-        public async Task<ActionResult<IEnumerable<TmItemtype>>> GetTmItemtype(string itemtype)
+        public async Task<ActionResult<List<ItemType>>> GetTmItemtype(string itemtype)
         {
             try
             {
@@ -401,7 +401,7 @@ namespace ReactPPD.Controllers
                     var tmItemType = await (from i in _context.TmItemtype
                                       where i.IsActive == "A"
                                       orderby i.Descn
-                                      select new TmItemtype { ItemType = i.ItemType, Descn = i.Descn }).ToListAsync();
+                                      select new ItemType { Itemtype = i.ItemType, Descn = i.Descn }).ToListAsync();
                     if (tmItemType.Count == 0)
                     {
                         var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
@@ -420,7 +420,7 @@ namespace ReactPPD.Controllers
                                      .Where(i => i.ItemType.StartsWith(itemtype))
                                      .Where(i => i.IsActive == "A")
                                      .OrderBy(i => i.Descn)
-                                     .Select(i => new TmItemtype { ItemType = i.ItemType, Descn = i.Descn }).ToListAsync();
+                                     .Select(i => new ItemType { Itemtype = i.ItemType, Descn = i.Descn }).ToListAsync();
                     if (tmItemType.Count == 0)
                     {
                         var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
@@ -445,12 +445,12 @@ namespace ReactPPD.Controllers
         }
 
         [HttpPost("ProductNature")]
-        public async Task<ActionResult<IEnumerable<TmProdnature>>> GetTmProdNature()
+        public async Task<ActionResult<List<ProdNature>>> GetTmProdNature()
         {
             try {
                 var tmProdnature = await _context.TmProdnature
                                    .OrderBy(i => i.Name)
-                                   .Select(i => new TmProdnature { Code = i.Code, Name = i.Name }).ToListAsync();
+                                   .Select(i => new ProdNature { Code = i.Code, Name = i.Name }).ToListAsync();
                 if (tmProdnature.Count == 0)
                 {
                     var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
@@ -467,8 +467,8 @@ namespace ReactPPD.Controllers
                 return BadRequest(new { Message = ex.Response.ReasonPhrase });
             }
         }
-        [HttpPost("UOMLARGESTUNIT")]
-        public async Task<ActionResult<IEnumerable<TmUom>>> GetTmUomLargest(string desc)
+        [HttpPost("UOML")]
+        public async Task<ActionResult<List<UOM>>> GetTmUomLargest(string desc)
         {
             try
             {
@@ -477,7 +477,7 @@ namespace ReactPPD.Controllers
                     var tmUom = await _context.TmUom
                                 .Where(i => i.IsActive == "A")
                                 .OrderBy(i => i.UomName)
-                                .Select(i => new TmUom { Uom = i.Uom, UomName = i.UomName }).ToListAsync();
+                                .Select(i => new UOM { Uom = i.Uom, UomName = i.UomName }).ToListAsync();
                     if(tmUom.Count==0)
                     {
                         var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
@@ -495,7 +495,7 @@ namespace ReactPPD.Controllers
                                 .Where(i => i.UomName.StartsWith(desc))
                                 .Where(i => i.IsActive == "A")
                                 .OrderBy(i => i.UomName)
-                                .Select(i => new TmUom { Uom = i.Uom, UomName = i.UomName }).ToListAsync();
+                                .Select(i => new UOM { Uom = i.Uom, UomName = i.UomName }).ToListAsync();
                     if (tmUom.Count == 0)
                     {
                         var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
@@ -516,8 +516,8 @@ namespace ReactPPD.Controllers
         }
 
        
-        [HttpPost("UOMSMALLESTUNIT")]
-        public async Task<ActionResult<IEnumerable<TmUom>>> GetTmUomSmallest(string desc)
+        [HttpPost("UOMS")]
+        public async Task<ActionResult<List<UOM>>> GetTmUomSmallest(string desc)
         {
             try
             {
@@ -526,7 +526,7 @@ namespace ReactPPD.Controllers
                     var tmUom = await _context.TmUom
                                 .Where(i => i.IsActive == "A")
                                 .OrderBy(i => i.UomName)
-                                .Select(i => new TmUom { Uom = i.Uom, UomName = i.UomName }).ToListAsync();
+                                .Select(i => new UOM { Uom = i.Uom, UomName = i.UomName }).ToListAsync();
                     if (tmUom.Count == 0)
                     {
                         var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
@@ -544,7 +544,7 @@ namespace ReactPPD.Controllers
                                 .Where(i => i.UomName.StartsWith(desc))
                                 .Where(i => i.IsActive == "A")
                                 .OrderBy(i => i.UomName)
-                                .Select(i => new TmUom { Uom = i.Uom, UomName = i.UomName }).ToListAsync();
+                                .Select(i => new UOM { Uom = i.Uom, UomName = i.UomName }).ToListAsync();
                     if (tmUom.Count == 0)
                     {
                         var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
@@ -565,8 +565,8 @@ namespace ReactPPD.Controllers
         }
 
        
-        [HttpPost("UOMPURCHASE")]
-        public async Task<ActionResult<IEnumerable<TmUom>>> GetTmUomPurchase(string desc)
+        [HttpPost("UOMP")]
+        public async Task<ActionResult<List<UOM>>> GetTmUomPurchase(string desc)
         {
             try
             {
@@ -575,7 +575,7 @@ namespace ReactPPD.Controllers
                     var tmUom = await _context.TmUom
                                 .Where(i => i.IsActive == "A")
                                 .OrderBy(i => i.UomName)
-                                .Select(i => new TmUom { Uom = i.Uom, UomName = i.UomName }).ToListAsync();
+                                .Select(i => new UOM { Uom = i.Uom, UomName = i.UomName }).ToListAsync();
                     if (tmUom.Count == 0)
                     {
                         var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
@@ -593,7 +593,7 @@ namespace ReactPPD.Controllers
                                 .Where(i => i.UomName.StartsWith(desc))
                                 .Where(i => i.IsActive == "A")
                                 .OrderBy(i => i.UomName)
-                                .Select(i => new TmUom { Uom = i.Uom, UomName = i.UomName }).ToListAsync();
+                                .Select(i => new UOM { Uom = i.Uom, UomName = i.UomName }).ToListAsync();
                     if (tmUom.Count == 0)
                     {
                         var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
@@ -613,7 +613,7 @@ namespace ReactPPD.Controllers
             }
         }
         [HttpPost("Section")]
-        public async Task<ActionResult<IEnumerable<TmGcm>>> GetTmGcm(string gcmdescn)
+        public async Task<ActionResult<List<Gcm>>> GetTmGcm(string gcmdescn)
         {
             try
             {
@@ -622,7 +622,7 @@ namespace ReactPPD.Controllers
                     var tmGcm = await _context.TmGcm
                                 .Where(i => i.GcmType == "PG" && i.IsActive == "A")
                                 .OrderBy(i => i.GcmDesc)
-                                .Select(i => new TmGcm { GcmCode = i.GcmCode, GcmDesc = i.GcmDesc }).ToListAsync();
+                                .Select(i => new Gcm { GcmCode = i.GcmCode, GcmDesc = i.GcmDesc }).ToListAsync();
                     if (tmGcm.Count == 0)
                     {
                         var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
@@ -640,7 +640,7 @@ namespace ReactPPD.Controllers
                                 .Where(i => i.GcmDesc.StartsWith(gcmdescn))
                                 .Where(i => i.GcmType == "PG" && i.IsActive == "A")
                                 .OrderBy(i => i.GcmDesc)
-                                .Select(i => new TmGcm { GcmCode = i.GcmCode, GcmDesc = i.GcmDesc }).ToListAsync();
+                                .Select(i => new Gcm { GcmCode = i.GcmCode, GcmDesc = i.GcmDesc }).ToListAsync();
                     if (tmGcm.Count == 0)
                     {
                         var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
@@ -661,7 +661,7 @@ namespace ReactPPD.Controllers
         }
 
         [HttpPost("ItemCategory")]
-        public async Task<ActionResult<IEnumerable<TmItemcategory>>> GetTmItemcategory(string categyname)
+        public async Task<ActionResult<List<ItemCategory>>> GetTmItemcategory(string categyname)
         {
             try
             {
@@ -670,7 +670,7 @@ namespace ReactPPD.Controllers
                     var tmItemcategory = await _context.TmItemcategory
                                          .Where(i => i.IsActive == "A")
                                          .OrderBy(i => i.CatgyName)
-                                         .Select(i => new TmItemcategory { CatgyCode = i.CatgyCode, CatgyName = i.CatgyName })
+                                         .Select(i => new ItemCategory { CatgyCode = i.CatgyCode, CatgyName = i.CatgyName })
                                          .ToListAsync();
                     if (tmItemcategory.Count == 0)
                     {
@@ -689,7 +689,7 @@ namespace ReactPPD.Controllers
                                          .Where(i => i.CatgyCode.StartsWith(categyname))
                                          .Where(i => i.IsActive == "A")
                                          .OrderBy(i => i.CatgyName)
-                                         .Select(i => new TmItemcategory { CatgyCode = i.CatgyCode, CatgyName = i.CatgyName })
+                                         .Select(i => new ItemCategory { CatgyCode = i.CatgyCode, CatgyName = i.CatgyName })
                                          .ToListAsync();
                                           
                     if (tmItemcategory.Count == 0)
@@ -769,9 +769,8 @@ namespace ReactPPD.Controllers
         public async Task<ActionResult<Response>> PostTmItem(string branchcode, int acyear, string section, string gradesection, string sectionname, string itemcode, TmItem tmItem)
         {
             if (itemcode != tmItem.ItemCode)
-            {
-                _context.TmItem.Add(tmItem);
-                if (tmItem.ItemType.StartsWith("Ch") || tmItem.ItemType.StartsWith("FC"))
+            {                
+                if (tmItem.ItemType.StartsWith("CH") || tmItem.ItemType.StartsWith("FC"))
                 {
                     TmMeats tmmeats = new TmMeats();
                     tmmeats.MeatsCode = tmItem.ItemCode;
@@ -785,6 +784,7 @@ namespace ReactPPD.Controllers
                     tmmeats.SectionName = sectionname;
                     _context.TmMeats.Add(tmmeats);
                 }
+                _context.TmItem.Add(tmItem);
                 try
                 {
                     await _context.SaveChangesAsync();
@@ -799,21 +799,40 @@ namespace ReactPPD.Controllers
 
                 return new Response { Status = "SUCCESSFULL", Message = "SAVED SUCCESSFULLY" };
             }
-            else if (itemcode != tmItem.ItemCode)
+            else if (itemcode == tmItem.ItemCode)
             {
-                if (tmItem.ItemType.StartsWith("Ch") || tmItem.ItemType.StartsWith("FC"))
+                TmMeats tmmeats = new TmMeats();
+                TmItem updtmItem = new TmItem();
+                if (tmItem.ItemType.StartsWith("CH") || tmItem.ItemType.StartsWith("FC"))
                 {
-                    TmMeats tmmeats = new TmMeats();
-                    tmmeats.MeatsName = tmItem.ItemName;
+                                      
                     tmmeats.Uom = tmItem.UomPur;
                     tmmeats.Section = section;
                     tmmeats.GradeSection = gradesection;
                     tmmeats.SectionName = sectionname;
 
-                    _context.Entry(tmmeats).State = EntityState.Modified;
-
-                }
-                    _context.Entry(tmItem).State = EntityState.Modified;
+                    _context.Entry(tmmeats).State = EntityState.Modified;      
+                    
+                }               
+                updtmItem.ItemName = tmItem.ItemName;
+                updtmItem.ItemSpec = tmItem.ItemSpec;
+                updtmItem.PartNo = tmItem.PartNo;
+                updtmItem.ShortName = tmItem.ShortName;
+                updtmItem.Category = tmItem.Category;
+                updtmItem.ItemGroup = tmItem.ItemGroup;
+                updtmItem.UomRelation = tmItem.UomRelation;
+                updtmItem.UomPur = tmItem.UomPur;
+                updtmItem.VisInSpn = tmItem.VisInSpn;
+                updtmItem.InSpn = tmItem.InSpn;
+                updtmItem.CashPur = tmItem.CashPur;
+                updtmItem.ContCode1 = tmItem.ContCode1;
+                updtmItem.ContCode2 = tmItem.ContCode2;
+                updtmItem.PmxCode1 = tmItem.PmxCode1;
+                updtmItem.PmxCode2 = tmItem.PmxCode2;
+                updtmItem.ProdNature = tmItem.ProdNature;
+                updtmItem.HsnCode = tmItem.HsnCode;
+                updtmItem.StdWt = tmItem.StdWt;
+               _context.Entry(updtmItem).State = EntityState.Modified;
 
 
             try
@@ -822,10 +841,12 @@ namespace ReactPPD.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!TmItemExists(itemcode))
+                if (!TmItemExists(itemcode) || tmmeats.MeatsCode != itemcode)
                 {
                     return new Response { Status = "NotFound", Message = "Record Not Found" };
                 }
+                    else { 
+                        return new Response { Status = "Not Allowed", Message = "Update Not Allowed" }; }
                 
             }
 

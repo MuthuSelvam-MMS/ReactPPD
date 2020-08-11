@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 namespace ReactPPD.Model
 {
     public partial class reactppdContext : DbContext
-    {    
+    {       
         public reactppdContext(DbContextOptions<reactppdContext> options)
             : base(options)
         {
@@ -44,7 +44,7 @@ namespace ReactPPD.Model
         public virtual DbSet<TmUserright> TmUserright { get; set; }
         public virtual DbSet<TmVendor> TmVendor { get; set; }
         public virtual DbSet<TmZone> TmZone { get; set; }
-        public virtual DbSet<TtShedready> TtShedready { get; set; }      
+        public virtual DbSet<TtShedready> TtShedready { get; set; }             
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -1519,11 +1519,25 @@ namespace ReactPPD.Model
                     .IsUnicode(false)
                     .HasDefaultValueSql("'A'");
 
+                entity.Property(e => e.AcCode)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.AcPostBase)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'T'");
+
                 entity.Property(e => e.CashPur)
                     .IsUnicode(false)
                     .HasDefaultValueSql("'N'");
 
                 entity.Property(e => e.Category).IsUnicode(false);
+
+                entity.Property(e => e.Cess)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.Property(e => e.ContCap).HasDefaultValueSql("'0.0000'");
 
                 entity.Property(e => e.ContCode1)
                     .IsUnicode(false)
@@ -1533,9 +1547,27 @@ namespace ReactPPD.Model
                     .IsUnicode(false)
                     .HasDefaultValueSql("'NONE'");
 
+                entity.Property(e => e.ContWtConf)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.Property(e => e.Div)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'G'");
+
+                entity.Property(e => e.Division).IsUnicode(false);
+
+                entity.Property(e => e.ExpDays).HasDefaultValueSql("'90'");
+
                 entity.Property(e => e.Fsn)
                     .IsUnicode(false)
                     .HasDefaultValueSql("'F'");
+
+                entity.Property(e => e.HsnCode).IsUnicode(false);
+
+                entity.Property(e => e.InReq)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'Y'");
 
                 entity.Property(e => e.InSpn).IsUnicode(false);
 
@@ -1550,6 +1582,10 @@ namespace ReactPPD.Model
                 entity.Property(e => e.ItemSpec).IsUnicode(false);
 
                 entity.Property(e => e.ItemType).IsUnicode(false);
+
+                entity.Property(e => e.Nature)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
 
                 entity.Property(e => e.PartNo).IsUnicode(false);
 

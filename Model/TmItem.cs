@@ -83,6 +83,34 @@ namespace ReactPPD.Model
         public string PmxCode2 { get; set; }
         [StringLength(25)]
         public string ProdNature { get; set; }
+        [StringLength(1)]
+        public string Cess { get; set; }
+        [StringLength(1)]
+        public string Nature { get; set; }
+        [StringLength(10)]
+        public string Div { get; set; }
+        [Column(TypeName = "decimal(18,4)")]
+        public decimal? ContCap { get; set; }
+        [StringLength(1)]
+        public string ContWtConf { get; set; }
+        [Column(TypeName = "int(4)")]
+        public int? ExpDays { get; set; }
+        [StringLength(10)]
+        public string InReq { get; set; }
+        [StringLength(10)]
+        public string AcCode { get; set; }
+        [StringLength(1)]
+        public string AcPostBase { get; set; }
+        [StringLength(10)]
+        public string Division { get; set; }
+        [StringLength(10)]
+        public string HsnCode { get; set; }
+        [Column(TypeName = "decimal(18,4)")]
+        public decimal? Doses { get; set; }
+        [Column(TypeName = "int(11)")]
+        public int? NoOfPackets { get; set; }
+        [Column(TypeName = "decimal(18,4)")]
+        public decimal? StdWt { get; set; }
 
         [ForeignKey(nameof(Category))]
         [InverseProperty(nameof(TmItemcategory.TmItem))]
