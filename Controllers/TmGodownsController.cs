@@ -714,7 +714,7 @@ namespace ReactPPD.Controllers
                 newtmGodown.MailId = tmGodown.MailId;
                 newtmGodown.FaxNo = tmGodown.FaxNo;
                 newtmGodown.MobileNo = tmGodown.MobileNo;
-
+               
                 _context.Entry(newtmGodown).State = EntityState.Modified;
 
                 try

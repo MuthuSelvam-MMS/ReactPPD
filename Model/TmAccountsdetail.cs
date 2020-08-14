@@ -11,6 +11,8 @@ namespace ReactPPD.Model
         public TmAccountsdetail()
         {
             TmAcbrmap = new HashSet<TmAcbrmap>();
+            TmDoctypesAcCode11 = new HashSet<TmDoctypes>();
+            TmDoctypesAcCode2 = new HashSet<TmDoctypes>();
             TmVendor = new HashSet<TmVendor>();
         }
 
@@ -108,6 +110,10 @@ namespace ReactPPD.Model
         public virtual TmAccounts AccountCodeNavigation { get; set; }
         [InverseProperty("AccountCode1")]
         public virtual ICollection<TmAcbrmap> TmAcbrmap { get; set; }
+        [InverseProperty(nameof(TmDoctypes.AcCode11))]
+        public virtual ICollection<TmDoctypes> TmDoctypesAcCode11 { get; set; }
+        [InverseProperty(nameof(TmDoctypes.AcCode2))]
+        public virtual ICollection<TmDoctypes> TmDoctypesAcCode2 { get; set; }
         [InverseProperty("AccountCode1")]
         public virtual ICollection<TmVendor> TmVendor { get; set; }
     }

@@ -15,6 +15,8 @@ namespace ReactPPD.Model
             TmAcbrmapAccountCodeNavigation = new HashSet<TmAcbrmap>();
             TmAcbrmapAccountNameNavigation = new HashSet<TmAcbrmap>();
             TmCompany = new HashSet<TmCompany>();
+            TmDoctypesAcCode1Navigation = new HashSet<TmDoctypes>();
+            TmDoctypesAcCodeNavigation = new HashSet<TmDoctypes>();
             TmItemtypeFrtInAcNavigation = new HashSet<TmItemtype>();
             TmItemtypeFrtOutAcNavigation = new HashSet<TmItemtype>();
             TmItemtypeOthDedAcNavigation = new HashSet<TmItemtype>();
@@ -171,6 +173,10 @@ namespace ReactPPD.Model
         public virtual ICollection<TmAcbrmap> TmAcbrmapAccountNameNavigation { get; set; }
         [InverseProperty("GcacCodeNavigation")]
         public virtual ICollection<TmCompany> TmCompany { get; set; }
+        [InverseProperty(nameof(TmDoctypes.AcCode1Navigation))]
+        public virtual ICollection<TmDoctypes> TmDoctypesAcCode1Navigation { get; set; }
+        [InverseProperty(nameof(TmDoctypes.AcCodeNavigation))]
+        public virtual ICollection<TmDoctypes> TmDoctypesAcCodeNavigation { get; set; }
         [InverseProperty(nameof(TmItemtype.FrtInAcNavigation))]
         public virtual ICollection<TmItemtype> TmItemtypeFrtInAcNavigation { get; set; }
         [InverseProperty(nameof(TmItemtype.FrtOutAcNavigation))]

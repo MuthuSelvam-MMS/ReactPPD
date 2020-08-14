@@ -33,7 +33,7 @@ namespace ReactPPD.Controllers
 
         // GET: api/TmAcbrmaps/5
         [HttpPost("Account")]
-        public async Task<ActionResult<IEnumerable<TmAccounts>>> GetTmAccounts( string accountname)
+        public async Task<ActionResult<List<Account>>> GetTmAccounts( string accountname)
         {
             try
             {
@@ -43,7 +43,7 @@ namespace ReactPPD.Controllers
                                      .Where(i => i.PartyType !="E" || i.PartyType != "F")
                                      .Where(i => i.IsActive.Contains("A"))
                                      .OrderBy(i => i.AccountName)
-                                     .Select(i => new TmAccounts { AccountCode = i.AccountCode, AccountName = i.AccountName,AcType = i.AcType })
+                                     .Select(i => new Account { AccountCode = i.AccountCode, AccountName = i.AccountName,AcType = i.AcType })
                                      .ToListAsync();
 
 
@@ -66,7 +66,7 @@ namespace ReactPPD.Controllers
                                     .Where(i => i.IsActive.Contains("A"))
                                     .Where(i => i.AccountName.Contains(accountname))
                                     .OrderBy(i => i.AccountName)
-                                    .Select(i => new TmAccounts { AccountCode = i.AccountCode, AccountName = i.AccountName, AcType = i.AcType })
+                                    .Select(i => new Account { AccountCode = i.AccountCode, AccountName = i.AccountName, AcType = i.AcType })
                                     .ToListAsync();
 
 
@@ -90,7 +90,7 @@ namespace ReactPPD.Controllers
             }
         }
         [HttpPost("Company")]
-        public async Task<ActionResult<IEnumerable<TmCompany>>> GetTmCompany(string companyname)
+        public async Task<ActionResult<List<Company>>> GetTmCompany(string companyname)
         {
             try
             {
@@ -98,7 +98,7 @@ namespace ReactPPD.Controllers
                 {
                     var tmCompany = await _context.TmCompany                                   
                                    .OrderBy(i => i.CompanyName)
-                                   .Select(i => new TmCompany { CompanyCode = i.CompanyCode, CompanyName = i.CompanyName })
+                                   .Select(i => new Company { CompanyCode = i.CompanyCode, CompanyName = i.CompanyName })
                                    .ToListAsync();
 
 
@@ -119,7 +119,7 @@ namespace ReactPPD.Controllers
                     var tmCompany = await _context.TmCompany
                                    .Where(i => i.CompanyName.Contains(companyname))
                                    .OrderBy(i => i.CompanyName)
-                                   .Select(i => new TmCompany { CompanyCode = i.CompanyCode, CompanyName = i.CompanyName })
+                                   .Select(i => new Company { CompanyCode = i.CompanyCode, CompanyName = i.CompanyName })
                                    .ToListAsync();
 
 
@@ -143,7 +143,7 @@ namespace ReactPPD.Controllers
             }
         }
         [HttpPost("Division")]
-        public async Task<ActionResult<IEnumerable<TmDivision>>> GetTmDivision(string companycode)
+        public async Task<ActionResult<List<Division>>> GetTmDivision(string companycode)
         {
             try
             {
@@ -155,7 +155,7 @@ namespace ReactPPD.Controllers
                                      .Where(m => m.TmDivision.IsActive == m.TmDivision.IsActive)
                                      .Where(m => m.TmDivision.IsActive.Contains("A"))
                                      .OrderBy(m => m.TmDivision.DivName)
-                                     .Select(m => new TmDivision
+                                     .Select(m => new Division
                                      {
                                        DivCode = m.TmDivision.DivCode,
                                        DivName = m.TmDivision.DivName
@@ -184,7 +184,7 @@ namespace ReactPPD.Controllers
                                      .Where(m => m.TmDivision.IsActive.Contains("A"))
                                      .Where(m => m.TmBranch.CompanyCode.Contains(companycode))
                                      .OrderBy(m => m.TmDivision.DivName)
-                                     .Select(m => new TmDivision
+                                     .Select(m => new Division
                                      {
                                          DivCode = m.TmDivision.DivCode,
                                          DivName = m.TmDivision.DivName
@@ -213,7 +213,7 @@ namespace ReactPPD.Controllers
         }
 
         [HttpPost("Region")]
-        public async Task<ActionResult<IEnumerable<TmRegion>>> GetTmRegionMap(string companycode,string divcode,string regzonecode)
+        public async Task<ActionResult<List<Region>>> GetTmRegionMap(string companycode,string divcode,string regzonecode)
         {
             try
             {
@@ -226,7 +226,7 @@ namespace ReactPPD.Controllers
                                      .Where(m => m.TmRegion.TmRegionmap.IsActive.Contains("A"))
                                      .Where(m => m.TmRegion.TmRegion.RegionCode != "NONE")
                                      .OrderBy(m => m.TmRegion.TmRegion.RegionName)
-                                     .Select(m => new TmRegion
+                                     .Select(m => new Region
                                      {
                                          RegionCode = m.TmRegion.TmRegion.RegionCode,
                                          RegionName = m.TmRegion.TmRegion.RegionName
@@ -258,7 +258,7 @@ namespace ReactPPD.Controllers
                                    .Where( m => m.TmRegion.TmRegionmap.DivCode.Contains(divcode))
                                    .Where(m => m.TmRegion.TmRegionmap.RegZoneCode.Contains(regzonecode))
                                    .OrderBy(m => m.TmRegion.TmRegion.RegionName)
-                                   .Select(m => new TmRegion
+                                   .Select(m => new Region
                                      {
                                          RegionCode = m.TmRegion.TmRegion.RegionCode,
                                          RegionName = m.TmRegion.TmRegion.RegionName
@@ -287,7 +287,7 @@ namespace ReactPPD.Controllers
         }
 
         [HttpPost("Territory")]
-        public async Task<ActionResult<IEnumerable<TmZone>>> GetTmZonep(string companycode, string divcode, string regzonecode,string regioncode)
+        public async Task<ActionResult<List<Zone>>> GetTmZonep(string companycode, string divcode, string regzonecode,string regioncode)
         {
             try
             {
@@ -300,7 +300,7 @@ namespace ReactPPD.Controllers
                                      .Where(m => m.TmZone.RegZoneCode == m.TmZone.RegZoneCode)
                                      .Where(m => m.TmZone.ZoneCode != "NONE")
                                      .OrderBy(m => m.TmZone.ZoneName)
-                                     .Select(m => new TmZone
+                                     .Select(m => new Zone
                                      {
                                          ZoneCode = m.TmZone.ZoneCode,
                                          ZoneName = m.TmZone.ZoneName
@@ -333,7 +333,7 @@ namespace ReactPPD.Controllers
                                       .Where(m => m.TmZone.RegionCode.Contains(regioncode))
                                       .Where(m => m.TmZone.RegZoneCode.Contains(regzonecode))
                                       .OrderBy(m => m.TmZone.ZoneName)
-                                      .Select(m => new TmZone
+                                      .Select(m => new Zone
                                       {
                                           ZoneCode = m.TmZone.ZoneCode,
                                           ZoneName = m.TmZone.ZoneName
@@ -362,7 +362,7 @@ namespace ReactPPD.Controllers
         }
 
         [HttpPost("Branch")]
-        public async Task<ActionResult<IEnumerable<TmBranch>>> GetTmBranch(string companycode, string divcode, string regzonecode, string regioncode,string zonecode)
+        public async Task<ActionResult<List<Branch>>> GetTmBranch(string companycode, string divcode, string regzonecode, string regioncode,string zonecode)
         {
             try
             {
@@ -370,7 +370,7 @@ namespace ReactPPD.Controllers
                 {
                     var tmBranch = await _context.TmBranch                                    
                                    .OrderBy(i => i.BranchName)
-                                   .Select(i => new TmBranch {BranchCode = i.BranchCode,BranchName= i.BranchName })
+                                   .Select(i => new Branch {BranchCode = i.BranchCode,BranchName= i.BranchName })
                                     .ToListAsync();
 
 
@@ -395,7 +395,7 @@ namespace ReactPPD.Controllers
                                    .Where(i => i.RegionCode.Contains(regioncode))
                                    .Where(i => i.ZoneCode.Contains(zonecode))
                                    .OrderBy(i => i.BranchName)
-                                   .Select(i => new TmBranch { BranchCode = i.BranchCode, BranchName = i.BranchName })
+                                   .Select(i => new Branch { BranchCode = i.BranchCode, BranchName = i.BranchName })
                                    .ToListAsync();
 
 
@@ -420,7 +420,7 @@ namespace ReactPPD.Controllers
         }
 
      [HttpPost("RegZone")]
-        public async Task<ActionResult<IEnumerable<TmRegzone>>> GetTmRegZone(string companycode, string divcode)
+        public async Task<ActionResult<List<Regzone>>> GetTmRegZone(string companycode, string divcode)
         {
             try
             {
@@ -434,7 +434,7 @@ namespace ReactPPD.Controllers
                                      .Where(m => m.TmBranch.TmRegzonemap.TmRegzone.CmpId == m.TmDivision.CompanyCode)
                                      .Where(m =>m.TmBranch.TmRegzonemap.TmRegzone.RegZoneCode != "NONE")
                                      .OrderBy(m => m.TmBranch.TmRegzonemap.TmRegzone.RegZoneCode)
-                                     .Select(m => new TmRegzone
+                                     .Select(m => new Regzone
                                      {
                                          RegZoneCode = m.TmBranch.TmRegzonemap.TmRegzone.RegZoneCode,
                                          RegZoneName= m.TmBranch.TmRegzonemap.TmRegzone.RegZoneName
@@ -466,7 +466,7 @@ namespace ReactPPD.Controllers
                                     .Where(m => m.TmDivision.CompanyCode.Contains(companycode))
                                     .Where(m =>m.TmDivision.DivCode.Contains(divcode))
                                     .OrderBy(m => m.TmBranch.TmRegzonemap.TmRegzone.RegZoneCode)
-                                    .Select(m => new TmRegzone
+                                    .Select(m => new Regzone
                                     {
                                         RegZoneCode = m.TmBranch.TmRegzonemap.TmRegzone.RegZoneCode,
                                         RegZoneName = m.TmBranch.TmRegzonemap.TmRegzone.RegZoneName
@@ -494,50 +494,40 @@ namespace ReactPPD.Controllers
             }
         }
 
-       /* [HttpPost("ViewData")]
-        public async Task<ActionResult<List<AccountBrMap>>> ViewTmVendor(string branchcode, string divcode,string zonecode)
+       [HttpPost("ViewData")]
+        public async Task<ActionResult<List<AccountBrMap>>> ViewTmAccountBrMap(string Accountcode, string divcode,string zonecode)
         {
             try
             {
-                var tmVendor = await _context.TmAcbrmap
-                              .Join(_context.TmBranch, acm => acm.BranchCode,b => b.BranchCode, (acm,b) => new { TmAcbrmap = acm, TmBranch = b })
-                              .Where(m =>m.TmAcbrmap.BranchCode.Contains(branchcode))
-                              .Where(m =>m.TmBranch.DivCode.Contains(divcode))
-                              .Where(m =>m.TmBranch.ZoneCode.Contains(zonecode))
-                              .Where(m => m.TmBranch.IsActive.Contains("A")
-                              .Select(m => new
-                              {
-                                 
-                              }).ToListAsync();
-                List<VendorItem> vendoritems = new List<VendorItem>();
-                foreach (var items in tmVendor)
-                {
-                    vendoritems.Add(new VendorItem
-                    {
-                        AccountCode = items.AccountCode.ToString(),
-                        AccountName = items.AccountName.ToString(),
-                        ItemCode = items.ItemCode.ToString(),
-                        ItemName = items.ItemName.ToString()
-                    });
-                }
+                var tmAccountBrMap = await _context.TmAcbrmap
+                                    .Join(_context.TmBranch, acm => acm.BranchCode,b => b.BranchCode, (acm,b) => new { TmAcbrmap = acm, TmBranch = b })
+                                    .Where(m => m.TmBranch.IsActive.Contains("A"))
+                                    .Where(m => m.TmAcbrmap.AccountCode.Contains(Accountcode) && m.TmBranch.DivCode.Contains(divcode) && m.TmBranch.ZoneCode.Contains(zonecode))                             
+                                    .Select(m => new AccountBrMap
+                                    {
+                                      BranchCode = m.TmAcbrmap.BranchCode,
+                                      BranchName = m.TmBranch.BranchName,
+                                      IsActive = m.TmBranch.IsActive,
+                                      IsBudgetable = m.TmAcbrmap.IsBudgetable
+                                    }).ToListAsync();             
 
-                if (tmVendor.Count == 0)
+                if (tmAccountBrMap.Count == 0)
                 {
                     var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
                     {
-                        Content = new StringContent(string.Format("No Vendor with Code{0} And Items with Code{1} ", accountcode, itemcode)),
-                        ReasonPhrase = "Vendor And Iten  Not Found"
+                        Content = new StringContent(string.Format("No Account with Code = {0}",Accountcode)),
+                        ReasonPhrase = "Branches Not Found"
                     };
                     throw new System.Web.Http.HttpResponseException(resp);
                 }
 
-                return vendoritems;
+                return tmAccountBrMap;
             }
             catch (System.Web.Http.HttpResponseException ex)
             {
                 return BadRequest(new { Message = ex.Response.ReasonPhrase });
             }
-        }*/
+        }
         // PUT: api/TmAcbrmaps/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
@@ -573,29 +563,56 @@ namespace ReactPPD.Controllers
         // POST: api/TmAcbrmaps
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPost]
-        public async Task<ActionResult<TmAcbrmap>> PostTmAcbrmap(TmAcbrmap tmAcbrmap)
+        [HttpPost("SaveUpdate")]
+        public async Task<ActionResult<Response>> PostTmAcBrMap(string accountcode,TmAcbrmap tmacbrmap)
         {
-            _context.TmAcbrmap.Add(tmAcbrmap);
-            try
+            if ( accountcode != tmacbrmap.AccountCode)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (TmAcbrmapExists(tmAcbrmap.BranchCode))
+                _context.TmAcbrmap.Add(tmacbrmap);
+                try
                 {
-                    return Conflict();
+                    await _context.SaveChangesAsync();
                 }
-                else
+                catch (DbUpdateException)
                 {
-                    throw;
+                    if (TmAcbrmapExists(tmacbrmap.AccountCode))
+                    {
+                        return new Response { Status = "Conflict", Message = "Record Already Exist" };
+                    }
                 }
-            }
+                return new Response { Status = "SUCCESSFULL", Message = "SAVED SUCCESSFULLY" };
 
-            return CreatedAtAction("GetTmAcbrmap", new { id = tmAcbrmap.BranchCode }, tmAcbrmap);
+            }
+            else if (accountcode == tmacbrmap.AccountCode)
+            {
+               /* TmAcbrmap newAcbrmap = new TmAcbrmap();
+                newAcbrmap.BranchCode = tmacbrmap.BranchCode;
+                newAcbrmap.AccountCode = tmacbrmap.AccountCode;
+                newAcbrmap.IsBudgetable = tmacbrmap.IsBudgetable;
+                newAcbrmap.IsActive = tmacbrmap.IsActive;*/
+                _context.Entry(tmacbrmap).State = EntityState.Modified;
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!TmAcbrmapExists(accountcode))
+                    {
+
+                        return new Response { Status = "NotFound", Message = "Record Not Found" };
+                    }
+                    /* else
+                     {
+                         throw;
+                     }*/
+                }
+
+                return new Response { Status = "Updated", Message = "Record Updated Sucessfull" };
+            }
+            return null;
         }
-
         // DELETE: api/TmAcbrmaps/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<TmAcbrmap>> DeleteTmAcbrmap(string id)

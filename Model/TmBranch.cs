@@ -11,8 +11,11 @@ namespace ReactPPD.Model
         public TmBranch()
         {
             TmAcbrmap = new HashSet<TmAcbrmap>();
+            TmAcyearset = new HashSet<TmAcyearset>();
+            TmDoctypes = new HashSet<TmDoctypes>();
             TmEmployeeBranchCodeNavigation = new HashSet<TmEmployee>();
             TmEmployeeSubBrCodeNavigation = new HashSet<TmEmployee>();
+            TmReason = new HashSet<TmReason>();
             TmRegion = new HashSet<TmRegion>();
             TmUserdefault = new HashSet<TmUserdefault>();
             TmUserright = new HashSet<TmUserright>();
@@ -155,10 +158,16 @@ namespace ReactPPD.Model
 
         [InverseProperty("BranchCodeNavigation")]
         public virtual ICollection<TmAcbrmap> TmAcbrmap { get; set; }
+        [InverseProperty("BranchCodeNavigation")]
+        public virtual ICollection<TmAcyearset> TmAcyearset { get; set; }
+        [InverseProperty("BranchCodeNavigation")]
+        public virtual ICollection<TmDoctypes> TmDoctypes { get; set; }
         [InverseProperty(nameof(TmEmployee.BranchCodeNavigation))]
         public virtual ICollection<TmEmployee> TmEmployeeBranchCodeNavigation { get; set; }
         [InverseProperty(nameof(TmEmployee.SubBrCodeNavigation))]
         public virtual ICollection<TmEmployee> TmEmployeeSubBrCodeNavigation { get; set; }
+        [InverseProperty("BranchCodeNavigation")]
+        public virtual ICollection<TmReason> TmReason { get; set; }
         [InverseProperty("RobrCodeNavigation")]
         public virtual ICollection<TmRegion> TmRegion { get; set; }
         [InverseProperty("BranchCodeNavigation")]

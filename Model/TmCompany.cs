@@ -10,6 +10,7 @@ namespace ReactPPD.Model
     {
         public TmCompany()
         {
+            TmDoctypes = new HashSet<TmDoctypes>();
             TmRegionmap = new HashSet<TmRegionmap>();
             TmRegzonemap = new HashSet<TmRegzonemap>();
         }
@@ -114,6 +115,8 @@ namespace ReactPPD.Model
         [ForeignKey(nameof(GcacCode))]
         [InverseProperty(nameof(TmAccounts.TmCompany))]
         public virtual TmAccounts GcacCodeNavigation { get; set; }
+        [InverseProperty("CompanyCodeNavigation")]
+        public virtual ICollection<TmDoctypes> TmDoctypes { get; set; }
         [InverseProperty("CompanyCodeNavigation")]
         public virtual ICollection<TmRegionmap> TmRegionmap { get; set; }
         [InverseProperty("CompanyCodeNavigation")]

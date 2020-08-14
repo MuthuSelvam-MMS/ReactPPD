@@ -805,15 +805,17 @@ namespace ReactPPD.Controllers
                 TmItem updtmItem = new TmItem();
                 if (tmItem.ItemType.StartsWith("CH") || tmItem.ItemType.StartsWith("FC"))
                 {
-                                      
+                    tmmeats.MeatsCode = tmItem.ItemCode;                  
                     tmmeats.Uom = tmItem.UomPur;
                     tmmeats.Section = section;
                     tmmeats.GradeSection = gradesection;
                     tmmeats.SectionName = sectionname;
+                    
 
                     _context.Entry(tmmeats).State = EntityState.Modified;      
                     
-                }               
+                }
+               /* updtmItem.ItemCode = tmItem.ItemCode;
                 updtmItem.ItemName = tmItem.ItemName;
                 updtmItem.ItemSpec = tmItem.ItemSpec;
                 updtmItem.PartNo = tmItem.PartNo;
@@ -831,8 +833,8 @@ namespace ReactPPD.Controllers
                 updtmItem.PmxCode2 = tmItem.PmxCode2;
                 updtmItem.ProdNature = tmItem.ProdNature;
                 updtmItem.HsnCode = tmItem.HsnCode;
-                updtmItem.StdWt = tmItem.StdWt;
-               _context.Entry(updtmItem).State = EntityState.Modified;
+                updtmItem.StdWt = tmItem.StdWt;*/
+               _context.Entry(tmItem).State = EntityState.Modified;
 
 
             try

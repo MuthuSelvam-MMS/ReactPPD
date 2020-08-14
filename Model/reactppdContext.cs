@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore.Metadata;
 namespace ReactPPD.Model
 {
     public partial class reactppdContext : DbContext
-    {       
+    {      
+
         public reactppdContext(DbContextOptions<reactppdContext> options)
             : base(options)
         {
@@ -15,6 +16,7 @@ namespace ReactPPD.Model
         public virtual DbSet<TmAccounts> TmAccounts { get; set; }
         public virtual DbSet<TmAccountsdetail> TmAccountsdetail { get; set; }
         public virtual DbSet<TmAcgroup> TmAcgroup { get; set; }
+        public virtual DbSet<TmAcyearset> TmAcyearset { get; set; }
         public virtual DbSet<TmAnalysis> TmAnalysis { get; set; }
         public virtual DbSet<TmBranch> TmBranch { get; set; }
         public virtual DbSet<TmCompany> TmCompany { get; set; }
@@ -22,6 +24,8 @@ namespace ReactPPD.Model
         public virtual DbSet<TmCurrency> TmCurrency { get; set; }
         public virtual DbSet<TmDesgn> TmDesgn { get; set; }
         public virtual DbSet<TmDivision> TmDivision { get; set; }
+        public virtual DbSet<TmDocclass> TmDocclass { get; set; }
+        public virtual DbSet<TmDoctypes> TmDoctypes { get; set; }
         public virtual DbSet<TmEmployee> TmEmployee { get; set; }
         public virtual DbSet<TmGcm> TmGcm { get; set; }
         public virtual DbSet<TmGcmtype> TmGcmtype { get; set; }
@@ -31,9 +35,11 @@ namespace ReactPPD.Model
         public virtual DbSet<TmItemcategory> TmItemcategory { get; set; }
         public virtual DbSet<TmItemtype> TmItemtype { get; set; }
         public virtual DbSet<TmMeats> TmMeats { get; set; }
+        public virtual DbSet<TmMenuitem> TmMenuitem { get; set; }
         public virtual DbSet<TmPartytype> TmPartytype { get; set; }
         public virtual DbSet<TmPlace> TmPlace { get; set; }
         public virtual DbSet<TmProdnature> TmProdnature { get; set; }
+        public virtual DbSet<TmReason> TmReason { get; set; }
         public virtual DbSet<TmRegion> TmRegion { get; set; }
         public virtual DbSet<TmRegionmap> TmRegionmap { get; set; }
         public virtual DbSet<TmRegzone> TmRegzone { get; set; }
@@ -44,7 +50,7 @@ namespace ReactPPD.Model
         public virtual DbSet<TmUserright> TmUserright { get; set; }
         public virtual DbSet<TmVendor> TmVendor { get; set; }
         public virtual DbSet<TmZone> TmZone { get; set; }
-        public virtual DbSet<TtShedready> TtShedready { get; set; }             
+        public virtual DbSet<TtShedready> TtShedready { get; set; }      
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -599,6 +605,48 @@ namespace ReactPPD.Model
                     .HasConstraintName("FK_AcGroupSchNo");
             });
 
+            modelBuilder.Entity<TmAcyearset>(entity =>
+            {
+                entity.HasKey(e => new { e.BranchCode, e.AcYearNo })
+                    .HasName("PRIMARY");
+
+                entity.HasIndex(e => new { e.BranchCode, e.IsActive, e.AcYearNo })
+                    .HasName("UK_AcYearSetBrcode")
+                    .IsUnique();
+
+                entity.HasIndex(e => new { e.IsActive, e.BranchCode, e.AcYearNo })
+                    .HasName("UK_AcYearSetIsActive")
+                    .IsUnique();
+
+                entity.HasIndex(e => new { e.BranchCode, e.IsActive, e.AcYearNo, e.FromMm, e.FromYyyy, e.ToMm, e.ToYyyy })
+                    .HasName("UK_AcYearSetPeriod")
+                    .IsUnique();
+
+                entity.Property(e => e.BranchCode).IsUnicode(false);
+
+                entity.Property(e => e.AllocTryy).IsUnicode(false);
+
+                entity.Property(e => e.EntryAllow)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'Y'");
+
+                entity.Property(e => e.IsActive)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'A'");
+
+                entity.Property(e => e.OpBalAllocTran).IsUnicode(false);
+
+                entity.Property(e => e.OpstkTrans)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.HasOne(d => d.BranchCodeNavigation)
+                    .WithMany(p => p.TmAcyearset)
+                    .HasForeignKey(d => d.BranchCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("PK_AcYearSetBranchCode");
+            });
+
             modelBuilder.Entity<TmAnalysis>(entity =>
             {
                 entity.HasKey(e => e.AnalCode)
@@ -730,9 +778,7 @@ namespace ReactPPD.Model
                     .IsUnicode(false)
                     .HasDefaultValueSql("'''NONE'''");
 
-                entity.Property(e => e.BrType)
-                    .IsUnicode(false)
-                    .HasDefaultValueSql("'BR'");
+                entity.Property(e => e.BrType).IsUnicode(false);
 
                 entity.Property(e => e.BranchName).IsUnicode(false);
 
@@ -1125,6 +1171,148 @@ namespace ReactPPD.Model
                     .WithMany(p => p.InversePrtDivCodeNavigation)
                     .HasForeignKey(d => d.PrtDivCode)
                     .HasConstraintName("DivisionPrtDivCode");
+            });
+
+            modelBuilder.Entity<TmDocclass>(entity =>
+            {
+                entity.HasKey(e => e.DocClass)
+                    .HasName("PRIMARY");
+
+                entity.HasIndex(e => e.DocClName)
+                    .HasName("UK_DocClassName")
+                    .IsUnique();
+
+                entity.Property(e => e.DocClass).IsUnicode(false);
+
+                entity.Property(e => e.DocClName).IsUnicode(false);
+
+                entity.Property(e => e.IsActive)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'A'");
+            });
+
+            modelBuilder.Entity<TmDoctypes>(entity =>
+            {
+                entity.HasKey(e => new { e.BranchCode, e.AcYearNo, e.DocType })
+                    .HasName("PRIMARY");
+
+                entity.HasIndex(e => e.AcCode1)
+                    .HasName("FK_DocTypesAcCode3");
+
+                entity.HasIndex(e => e.CompanyCode)
+                    .HasName("FK_DocTypesCom");
+
+                entity.HasIndex(e => new { e.BranchCode, e.AcYearNo, e.BaseDocType })
+                    .HasName("FK_DocTypeBaseDocType");
+
+                entity.HasIndex(e => new { e.AcCode, e.DocType, e.AcYearNo, e.BranchCode })
+                    .HasName("UK_DocTypesCodeDocType")
+                    .IsUnique();
+
+                entity.HasIndex(e => new { e.DocClass, e.DocType, e.AcYearNo, e.BranchCode })
+                    .HasName("UK_DocTypeDocClass")
+                    .IsUnique();
+
+                entity.Property(e => e.BranchCode).IsUnicode(false);
+
+                entity.Property(e => e.DocType).IsUnicode(false);
+
+                entity.Property(e => e.AcCode)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.AcCode1)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.BaseDocType).IsUnicode(false);
+
+                entity.Property(e => e.CompanyCode).IsUnicode(false);
+
+                entity.Property(e => e.DenomReq)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'Y'");
+
+                entity.Property(e => e.Descn).IsUnicode(false);
+
+                entity.Property(e => e.DocCategory).IsUnicode(false);
+
+                entity.Property(e => e.DocClass).IsUnicode(false);
+
+                entity.Property(e => e.DocName).IsUnicode(false);
+
+                entity.Property(e => e.IsActive)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'A'");
+
+                entity.Property(e => e.NumGenType)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NY'");
+
+                entity.Property(e => e.ShortName).IsUnicode(false);
+
+                entity.Property(e => e.TemplateCode)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.TemplateReq).IsUnicode(false);
+
+                entity.Property(e => e.WorkFlow)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.HasOne(d => d.AcCodeNavigation)
+                    .WithMany(p => p.TmDoctypesAcCodeNavigation)
+                    .HasForeignKey(d => d.AcCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_DocTypesAcCode2");
+
+                entity.HasOne(d => d.AcCode2)
+                    .WithMany(p => p.TmDoctypesAcCode2)
+                    .HasForeignKey(d => d.AcCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_DocTypesAcCodeAcDtl");
+
+                entity.HasOne(d => d.AcCode1Navigation)
+                    .WithMany(p => p.TmDoctypesAcCode1Navigation)
+                    .HasForeignKey(d => d.AcCode1)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_DocTypesAcCode3");
+
+                entity.HasOne(d => d.AcCode11)
+                    .WithMany(p => p.TmDoctypesAcCode11)
+                    .HasForeignKey(d => d.AcCode1)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_DocTypesAcCode1AcDtl");
+
+                entity.HasOne(d => d.BranchCodeNavigation)
+                    .WithMany(p => p.TmDoctypes)
+                    .HasForeignKey(d => d.BranchCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_DocTypesBranch");
+
+                entity.HasOne(d => d.CompanyCodeNavigation)
+                    .WithMany(p => p.TmDoctypes)
+                    .HasForeignKey(d => d.CompanyCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_DocTypesCom");
+
+                entity.HasOne(d => d.DocClassNavigation)
+                    .WithMany(p => p.TmDoctypes)
+                    .HasForeignKey(d => d.DocClass)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_DocTypesDocClass");
+
+                entity.HasOne(d => d.TmAcyearset)
+                    .WithMany(p => p.TmDoctypes)
+                    .HasForeignKey(d => new { d.BranchCode, d.AcYearNo })
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_DocTypesAcYearNo");
+
+                entity.HasOne(d => d.TmDoctypesNavigation)
+                    .WithMany(p => p.InverseTmDoctypesNavigation)
+                    .HasForeignKey(d => new { d.BranchCode, d.AcYearNo, d.BaseDocType })
+                    .HasConstraintName("FK_DocTypeBaseDocType");
             });
 
             modelBuilder.Entity<TmEmployee>(entity =>
@@ -2009,6 +2197,204 @@ namespace ReactPPD.Model
                 entity.Property(e => e.Uom).IsUnicode(false);
             });
 
+            modelBuilder.Entity<TmMenuitem>(entity =>
+            {
+                entity.HasKey(e => e.MenuId)
+                    .HasName("PRIMARY");
+
+                entity.HasIndex(e => new { e.Div1, e.MenuId })
+                    .HasName("UK_MenuItemDiv")
+                    .IsUnique();
+
+                entity.HasIndex(e => new { e.GroupId, e.MenuId })
+                    .HasName("UK_MenuItemGroupId")
+                    .IsUnique();
+
+                entity.HasIndex(e => new { e.IsActive, e.MenuId })
+                    .HasName("FK_MenuItemIsActiveE")
+                    .IsUnique();
+
+                entity.HasIndex(e => new { e.MenuCaption, e.MenuId })
+                    .HasName("UK_MenuItemCaption")
+                    .IsUnique();
+
+                entity.HasIndex(e => new { e.MenuType, e.MenuId })
+                    .HasName("UK_MenuItemType")
+                    .IsUnique();
+
+                entity.HasIndex(e => new { e.ModuleCode, e.MenuId })
+                    .HasName("UK_MenuItemModule")
+                    .IsUnique();
+
+                entity.HasIndex(e => new { e.UnitType, e.MenuId })
+                    .HasName("UK_MenuItemUnitType")
+                    .IsUnique();
+
+                entity.Property(e => e.MenuId).IsUnicode(false);
+
+                entity.Property(e => e.AcItemType)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.AcPartYgc)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.Property(e => e.AccChk)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.Property(e => e.ActionForm).IsUnicode(false);
+
+                entity.Property(e => e.AllocTrType).IsUnicode(false);
+
+                entity.Property(e => e.BcondType).IsUnicode(false);
+
+                entity.Property(e => e.CashSplit)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.Property(e => e.ColumnName).IsUnicode(false);
+
+                entity.Property(e => e.CondRowBuild)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.Property(e => e.DelAllow)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.Property(e => e.DelStatus)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'A'");
+
+                entity.Property(e => e.Div1)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'G'");
+
+                entity.Property(e => e.DocPrefix).IsUnicode(false);
+
+                entity.Property(e => e.DocTypeCheck)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.Property(e => e.DocVal)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.EditAllow)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.Property(e => e.EditNotAllow)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'I'");
+
+                entity.Property(e => e.ExpCodeTable)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.FormId).IsUnicode(false);
+
+                entity.Property(e => e.GroupId).IsUnicode(false);
+
+                entity.Property(e => e.HstFrom)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'B'");
+
+                entity.Property(e => e.ImpRep)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.Property(e => e.IsActive)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'A'");
+
+                entity.Property(e => e.IsExp)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.Property(e => e.IsRoBr)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.Property(e => e.ItemType)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.MenuCaption).IsUnicode(false);
+
+                entity.Property(e => e.MenuType).IsUnicode(false);
+
+                entity.Property(e => e.MenuUrlL).IsUnicode(false);
+
+                entity.Property(e => e.MisLevels).IsUnicode(false);
+
+                entity.Property(e => e.ModuleCode).IsUnicode(false);
+
+                entity.Property(e => e.ModuleType).IsUnicode(false);
+
+                entity.Property(e => e.Mselect)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.Property(e => e.OldPrefix).IsUnicode(false);
+
+                entity.Property(e => e.ParentId)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.PpSize)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'V'");
+
+                entity.Property(e => e.PrintNotAllow)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'I'");
+
+                entity.Property(e => e.ReportCpi).HasDefaultValueSql("'15'");
+
+                entity.Property(e => e.RoDocPrefix)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.Property(e => e.RptOption).IsUnicode(false);
+
+                entity.Property(e => e.SaveConfirm)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.StateCheck)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.StkChk)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.Property(e => e.TableName).IsUnicode(false);
+
+                entity.Property(e => e.TransferId)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.Property(e => e.UnitType).IsUnicode(false);
+
+                entity.Property(e => e.Ver).HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.WfCaption).IsUnicode(false);
+
+                entity.Property(e => e.WfDocType)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.WfUrl).IsUnicode(false);
+
+                entity.Property(e => e.WorkFlow)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+            });
+
             modelBuilder.Entity<TmPartytype>(entity =>
             {
                 entity.HasKey(e => e.PartyType)
@@ -2177,6 +2563,46 @@ namespace ReactPPD.Model
                     .HasDefaultValueSql("'A'");
 
                 entity.Property(e => e.Name).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TmReason>(entity =>
+            {
+                entity.HasKey(e => new { e.BranchCode, e.DocType, e.ReasonCode })
+                    .HasName("PRIMARY");
+
+                entity.HasIndex(e => new { e.BranchCode, e.DocType, e.ReasonName })
+                    .HasName("UK_Reason")
+                    .IsUnique();
+
+                entity.HasIndex(e => new { e.ReasonName, e.BranchCode, e.DocType })
+                    .HasName("UK_ReasonBrDocTpReasonName")
+                    .IsUnique();
+
+                entity.Property(e => e.BranchCode).IsUnicode(false);
+
+                entity.Property(e => e.DocType).IsUnicode(false);
+
+                entity.Property(e => e.ReasonCode).IsUnicode(false);
+
+                entity.Property(e => e.AccountCode)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.GrpCode)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.IsActive)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'A'");
+
+                entity.Property(e => e.ReasonName).IsUnicode(false);
+
+                entity.HasOne(d => d.BranchCodeNavigation)
+                    .WithMany(p => p.TmReason)
+                    .HasForeignKey(d => d.BranchCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ReasonBranch");
             });
 
             modelBuilder.Entity<TmRegion>(entity =>
