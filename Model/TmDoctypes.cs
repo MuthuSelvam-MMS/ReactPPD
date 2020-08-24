@@ -20,7 +20,7 @@ namespace ReactPPD.Model
         [StringLength(10)]
         public string BranchCode { get; set; }
         [Key]
-        [Column(TypeName = "int(6)")]
+        [Column(TypeName = "int(11)")]
         public int AcYearNo { get; set; }
         [Key]
         [StringLength(6)]

@@ -5,13 +5,11 @@ using System.Threading.Tasks;
 
 namespace ReactPPD.VM
 {
-    public class Account
+    public class Tds
     {
+        public string NatureCode { get; set; }
+        public string NatureDesc { get; set; }
         public string AccountCode { get; set; }
-        public string AccountName { get; set; }
-        public string AcType { get; set; }
-
-        public int CreditDays { get; set; }
-            
+        public decimal DedPer { get; set; }
     }
 }

@@ -11,6 +11,7 @@ namespace ReactPPD.Model
         public TmEmployee()
         {
             TmRegion = new HashSet<TmRegion>();
+            TmUserdivmap = new HashSet<TmUserdivmap>();
             TmUserright = new HashSet<TmUserright>();
             TmZone = new HashSet<TmZone>();
         }
@@ -181,6 +182,8 @@ namespace ReactPPD.Model
         public virtual TmUserdefault TmUserdefault { get; set; }
         [InverseProperty("RegHeadCodeNavigation")]
         public virtual ICollection<TmRegion> TmRegion { get; set; }
+        [InverseProperty("User")]
+        public virtual ICollection<TmUserdivmap> TmUserdivmap { get; set; }
         [InverseProperty("User")]
         public virtual ICollection<TmUserright> TmUserright { get; set; }
         [InverseProperty("ZoneHeadCodeNavigation")]

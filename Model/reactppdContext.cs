@@ -5,9 +5,8 @@ using Microsoft.EntityFrameworkCore.Metadata;
 namespace ReactPPD.Model
 {
     public partial class reactppdContext : DbContext
-    {      
-
-        public reactppdContext(DbContextOptions<reactppdContext> options)
+    {
+               public reactppdContext(DbContextOptions<reactppdContext> options)
             : base(options)
         {
         }
@@ -25,6 +24,7 @@ namespace ReactPPD.Model
         public virtual DbSet<TmDesgn> TmDesgn { get; set; }
         public virtual DbSet<TmDivision> TmDivision { get; set; }
         public virtual DbSet<TmDocclass> TmDocclass { get; set; }
+        public virtual DbSet<TmDoctables> TmDoctables { get; set; }
         public virtual DbSet<TmDoctypes> TmDoctypes { get; set; }
         public virtual DbSet<TmEmployee> TmEmployee { get; set; }
         public virtual DbSet<TmGcm> TmGcm { get; set; }
@@ -33,6 +33,7 @@ namespace ReactPPD.Model
         public virtual DbSet<TmGrpschedule> TmGrpschedule { get; set; }
         public virtual DbSet<TmItem> TmItem { get; set; }
         public virtual DbSet<TmItemcategory> TmItemcategory { get; set; }
+        public virtual DbSet<TmItemnature> TmItemnature { get; set; }
         public virtual DbSet<TmItemtype> TmItemtype { get; set; }
         public virtual DbSet<TmMeats> TmMeats { get; set; }
         public virtual DbSet<TmMenuitem> TmMenuitem { get; set; }
@@ -44,15 +45,17 @@ namespace ReactPPD.Model
         public virtual DbSet<TmRegionmap> TmRegionmap { get; set; }
         public virtual DbSet<TmRegzone> TmRegzone { get; set; }
         public virtual DbSet<TmRegzonemap> TmRegzonemap { get; set; }
+        public virtual DbSet<TmTdsac> TmTdsac { get; set; }
+        public virtual DbSet<TmTdsnature> TmTdsnature { get; set; }
         public virtual DbSet<TmUom> TmUom { get; set; }
         public virtual DbSet<TmUser> TmUser { get; set; }
         public virtual DbSet<TmUserdefault> TmUserdefault { get; set; }
+        public virtual DbSet<TmUserdivmap> TmUserdivmap { get; set; }
         public virtual DbSet<TmUserright> TmUserright { get; set; }
         public virtual DbSet<TmVendor> TmVendor { get; set; }
         public virtual DbSet<TmZone> TmZone { get; set; }
-        public virtual DbSet<TtShedready> TtShedready { get; set; }      
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        public virtual DbSet<TtShedready> TtShedready { get; set; }
+              protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<TmAcbrmap>(entity =>
             {
@@ -1191,6 +1194,46 @@ namespace ReactPPD.Model
                     .HasDefaultValueSql("'A'");
             });
 
+            modelBuilder.Entity<TmDoctables>(entity =>
+            {
+                entity.HasKey(e => new { e.DocType, e.TableName, e.ProcedureName, e.Operation, e.OrdId })
+                    .HasName("PRIMARY");
+
+                entity.Property(e => e.DocType).IsUnicode(false);
+
+                entity.Property(e => e.TableName).IsUnicode(false);
+
+                entity.Property(e => e.ProcedureName).IsUnicode(false);
+
+                entity.Property(e => e.Operation).IsUnicode(false);
+
+                entity.Property(e => e.AddParam)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.Property(e => e.ExCpmSg).IsUnicode(false);
+
+                entity.Property(e => e.GridColTitle).IsUnicode(false);
+
+                entity.Property(e => e.Header)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.Property(e => e.Mrows)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.Property(e => e.RowNo)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.Property(e => e.SgOrdId).HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.UpdStatus)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'Y'");
+            });
+
             modelBuilder.Entity<TmDoctypes>(entity =>
             {
                 entity.HasKey(e => new { e.BranchCode, e.AcYearNo, e.DocType })
@@ -1980,6 +2023,36 @@ namespace ReactPPD.Model
                     .HasForeignKey(d => d.PrtCode)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ItemPrtCode");
+            });
+
+            modelBuilder.Entity<TmItemnature>(entity =>
+            {
+                entity.HasKey(e => new { e.ItemCode, e.Nature })
+                    .HasName("PRIMARY");
+
+                entity.HasIndex(e => new { e.ItemCode, e.Descn, e.Nature })
+                    .HasName("UK_ItemNatureDesc")
+                    .IsUnique();
+
+                entity.Property(e => e.ItemCode).IsUnicode(false);
+
+                entity.Property(e => e.Nature).IsUnicode(false);
+
+                entity.Property(e => e.ContCode)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.Descn).IsUnicode(false);
+
+                entity.Property(e => e.IsActive)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'A'");
+
+                entity.HasOne(d => d.ItemCodeNavigation)
+                    .WithMany(p => p.TmItemnature)
+                    .HasForeignKey(d => d.ItemCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ItemNatureItemCode");
             });
 
             modelBuilder.Entity<TmItemtype>(entity =>
@@ -2805,6 +2878,47 @@ namespace ReactPPD.Model
                     .HasConstraintName("FK_RegZoneMapRz");
             });
 
+            modelBuilder.Entity<TmTdsac>(entity =>
+            {
+                entity.HasKey(e => new { e.AccountCode, e.Nature, e.IsActive, e.DocIntNo })
+                    .HasName("PRIMARY");
+
+                entity.HasIndex(e => e.Nature)
+                    .HasName("FK_TdsAcNature");
+
+                entity.Property(e => e.AccountCode).IsUnicode(false);
+
+                entity.Property(e => e.Nature).IsUnicode(false);
+
+                entity.Property(e => e.IsActive)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'A'");
+
+                entity.Property(e => e.DocNo)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'A'");
+
+                entity.HasOne(d => d.NatureNavigation)
+                    .WithMany(p => p.TmTdsac)
+                    .HasForeignKey(d => d.Nature)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_TdsAcNature");
+            });
+
+            modelBuilder.Entity<TmTdsnature>(entity =>
+            {
+                entity.HasKey(e => e.NatureCode)
+                    .HasName("PRIMARY");
+
+                entity.Property(e => e.NatureCode).IsUnicode(false);
+
+                entity.Property(e => e.IsActive)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'A'");
+
+                entity.Property(e => e.NatureDesc).IsUnicode(false);
+            });
+
             modelBuilder.Entity<TmUom>(entity =>
             {
                 entity.HasKey(e => e.Uom)
@@ -2963,6 +3077,45 @@ namespace ReactPPD.Model
                     .HasForeignKey<TmUserdefault>(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("UserDefaultUser");
+            });
+
+            modelBuilder.Entity<TmUserdivmap>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.DivCode })
+                    .HasName("PRIMARY");
+
+                entity.HasIndex(e => e.DivCode)
+                    .HasName("FK_UserDivMapDiv");
+
+                entity.HasIndex(e => new { e.IsActive, e.UserId, e.DivCode })
+                    .HasName("UK_UserDivMapIsActive")
+                    .IsUnique();
+
+                entity.Property(e => e.UserId).IsUnicode(false);
+
+                entity.Property(e => e.DivCode).IsUnicode(false);
+
+                entity.Property(e => e.IsActive)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'A'");
+
+                entity.HasOne(d => d.DivCodeNavigation)
+                    .WithMany(p => p.TmUserdivmap)
+                    .HasForeignKey(d => d.DivCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_UserDivMapDiv");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.TmUserdivmap)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_UserDivMapEmp");
+
+                entity.HasOne(d => d.UserNavigation)
+                    .WithMany(p => p.TmUserdivmap)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_UserDivMapUser");
             });
 
             modelBuilder.Entity<TmUserright>(entity =>

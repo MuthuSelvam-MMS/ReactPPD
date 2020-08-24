@@ -40,24 +40,141 @@ namespace ReactPPD.Controllers
 
         // GET: api/TmItems
         [HttpPost("ViewItem")]
-        public async Task<ActionResult<IEnumerable<TmItem>>> ViewTmItem(string ItemCode)
+        public async Task<ActionResult<List<ItemView>>> ViewTmItem(string ItemCode)
         {
             try
             {
-                var tmItem = await _context.TmItem
-                            .Where(i => i.ItemCode == ItemCode)
-                            .Select(i => i).ToListAsync();
-                if (tmItem.Count == 0)
+                var tmitem = await _context.TmItem.FindAsync(ItemCode);
+               if(tmitem !=null && tmitem.ItemType.StartsWith("CH") || tmitem.ItemType.StartsWith("FC"))
                 {
-                    var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
-                    {
-                        Content = new StringContent(string.Format("No ItemCode with ID = {0}", ItemCode)),
-                        ReasonPhrase = "Item  Not Found"
-                    };
-                    throw new System.Web.Http.HttpResponseException(resp);
-                }
-                return tmItem;
+                    var tmItem = await _context.TmItem
+                               .Join(_context.TmMeats, I => I.ItemCode, M => M.MeatsCode, (I, M) => new { TmItem = I, TmMeats = M })                               
+                               .Where(i => i.TmItem.ItemCode == ItemCode)
+                               .Select(i => new ItemView
+                               {
+                                   ItemCode = i.TmItem.ItemCode,
+                                   ItemName = i.TmItem.ItemName,
+                                   ItemSpec = i.TmItem.ItemSpec,
+                                   PartNo = i.TmItem.PartNo,
+                                   ShortName = i.TmItem.ShortName,
+                                   Itemtype = i.TmItem.ItemType,
+                                   Category = i.TmItem.Category,
+                                   ItemGroup = i.TmItem.ItemGroup,
+                                   PrtItem = i.TmItem.PrtItem,
+                                   UomBig = i.TmItem.UomBig,
+                                   UomSmall = i.TmItem.UomSmall,
+                                   UomRelation = i.TmItem.UomRelation,
+                                   UomPur = i.TmItem.UomPur,
+                                   UomStk = i.TmItem.UomStk,
+                                   VisInSpn = i.TmItem.VisInSpn,
+                                   InSpn = i.TmItem.InSpn,
+                                   CashPur = i.TmItem.CashPur,
+                                   Fsn = i.TmItem.Fsn,
+                                   Abc = i.TmItem.Abc,
+                                   IsActive = i.TmItem.IsActive,
+                                   StProdCode = i.TmItem.StProdCode,
+                                   ContCode1 = i.TmItem.ContCode1,
+                                   ContCode2 = i.TmItem.ContCode2,
+                                   PmxCode1 = i.TmItem.PmxCode1,
+                                   PmxCode2 = i.TmItem.PmxCode2,
+                                   Prodnature = i.TmItem.ProdNature,
+                                   Cess = i.TmItem.Cess,
+                                   Nature = i.TmItem.Nature,
+                                   Div = i.TmItem.Div,
+                                   ContCap = (Decimal)i.TmItem.ContCap,
+                                   ContWtConf = i.TmItem.ContWtConf,
+                                   ExpDays = (Int32)i.TmItem.ExpDays,
+                                   InReq = i.TmItem.InReq,
+                                   AcCode = i.TmItem.AcCode,
+                                   AcPostBase = i.TmItem.AcPostBase,
+                                   division = i.TmItem.Division,
+                                   HsnCode = i.TmItem.HsnCode,
+                                   Doses = (Decimal)i.TmItem.Doses,
+                                   NoOfPackets = (Int32)i.TmItem.NoOfPackets,
+                                   StdWt = (Decimal)i.TmItem.StdWt,
+                                   MeatsCode = i.TmMeats.MeatsCode,
+                                   MeatsName = i.TmMeats.MeatsName,
+                                   BranchCode = i.TmMeats.BranchCode,
+                                   AcYearNo = i.TmMeats.AcYearNo,
+                                   Uom = i.TmMeats.Uom,
+                                   Section = i.TmMeats.Section,
+                                   GradeSection = i.TmMeats.GradeSection,
+                                   SectionName = i.TmMeats.SectionName
 
+                               }).ToListAsync();
+                    if (tmItem.Count == 0)
+                    {
+                        var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                        {
+                            Content = new StringContent(string.Format("No ItemCode with ID = {0}", ItemCode)),
+                            ReasonPhrase = "Item  Not Found"
+                        };
+                        throw new System.Web.Http.HttpResponseException(resp);
+                    }
+                    return tmItem;                    
+                   
+                }
+               else
+                {
+                    var tmItem = await _context.TmItem
+                               .Where(i => i.ItemCode == ItemCode)
+                               .Select(i => new ItemView
+                               {
+                                   ItemCode = i.ItemCode,
+                                   ItemName = i.ItemName,
+                                   ItemSpec = i.ItemSpec,
+                                   PartNo = i.PartNo,
+                                   ShortName = i.ShortName,
+                                   Itemtype = i.ItemType,
+                                   Category = i.Category,
+                                   ItemGroup = i.ItemGroup,
+                                   PrtItem = i.PrtItem,
+                                   UomBig = i.UomBig,
+                                   UomSmall = i.UomSmall,
+                                   UomRelation = i.UomRelation,
+                                   UomPur = i.UomPur,
+                                   UomStk = i.UomStk,
+                                   VisInSpn = i.VisInSpn,
+                                   InSpn = i.InSpn,
+                                   CashPur = i.CashPur,
+                                   Fsn = i.Fsn,
+                                   Abc = i.Abc,
+                                   IsActive = i.IsActive,
+                                   StProdCode = i.StProdCode,
+                                   ContCode1 = i.ContCode1,
+                                   ContCode2 = i.ContCode2,
+                                   PmxCode1 = i.PmxCode1,
+                                   PmxCode2 = i.PmxCode2,
+                                   Prodnature = i.ProdNature,
+                                   Cess = i.Cess,
+                                   Nature = i.Nature,
+                                   Div = i.Div,
+                                   ContCap = (Decimal)i.ContCap,
+                                   ContWtConf = i.ContWtConf,
+                                   ExpDays = (Int32)i.ExpDays,
+                                   InReq = i.InReq,
+                                   AcCode = i.AcCode,
+                                   AcPostBase = i.AcPostBase,
+                                   division = i.Division,
+                                   HsnCode = i.HsnCode,
+                                   Doses = (Decimal)i.Doses,
+                                   NoOfPackets = (Int32)i.NoOfPackets,
+                                   StdWt = (Decimal)i.StdWt                                  
+
+                               }).ToListAsync();
+                    if (tmItem.Count == 0)
+                    {
+                        var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                        {
+                            Content = new StringContent(string.Format("No ItemCode with ID = {0}", ItemCode)),
+                            ReasonPhrase = "Item  Not Found"
+                        };
+                        throw new System.Web.Http.HttpResponseException(resp);
+                    }
+                    return tmItem;
+
+                }
+               
             }
             catch (System.Web.Http.HttpResponseException ex)
             {
@@ -875,6 +992,11 @@ namespace ReactPPD.Controllers
         private bool TmItemExists(string id)
         {
             return _context.TmItem.Any(e => e.ItemCode == id);
+        }
+
+        private bool TmMeatExists(string id)
+        {
+            return _context.TmMeats.Any(e => e.MeatsCode == id);
         }
     }
 }

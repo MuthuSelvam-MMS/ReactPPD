@@ -10,6 +10,7 @@ namespace ReactPPD.Model
     {
         public TmUser()
         {
+            TmUserdivmap = new HashSet<TmUserdivmap>();
             TmUserright = new HashSet<TmUserright>();
         }
 
@@ -55,6 +56,8 @@ namespace ReactPPD.Model
         public virtual TmRegion ReigionCodeNavigation { get; set; }
         [InverseProperty("UserNavigation")]
         public virtual TmUserdefault TmUserdefault { get; set; }
+        [InverseProperty("UserNavigation")]
+        public virtual ICollection<TmUserdivmap> TmUserdivmap { get; set; }
         [InverseProperty("UserNavigation")]
         public virtual ICollection<TmUserright> TmUserright { get; set; }
     }

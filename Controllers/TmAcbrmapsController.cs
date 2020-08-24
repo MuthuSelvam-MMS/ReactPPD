@@ -64,7 +64,7 @@ namespace ReactPPD.Controllers
                     var tmAccounts = await _context.TmAccounts
                                     .Where(i => i.PartyType != "E" || i.PartyType != "F")
                                     .Where(i => i.IsActive.Contains("A"))
-                                    .Where(i => i.AccountName.Contains(accountname))
+                                    .Where(i => i.AccountName.StartsWith(accountname))
                                     .OrderBy(i => i.AccountName)
                                     .Select(i => new Account { AccountCode = i.AccountCode, AccountName = i.AccountName, AcType = i.AcType })
                                     .ToListAsync();
@@ -117,7 +117,7 @@ namespace ReactPPD.Controllers
                 else if (companyname != null)
                 {
                     var tmCompany = await _context.TmCompany
-                                   .Where(i => i.CompanyName.Contains(companyname))
+                                   .Where(i => i.CompanyName.StartsWith(companyname))
                                    .OrderBy(i => i.CompanyName)
                                    .Select(i => new Company { CompanyCode = i.CompanyCode, CompanyName = i.CompanyName })
                                    .ToListAsync();
@@ -182,7 +182,7 @@ namespace ReactPPD.Controllers
                                      .Where(m => m.TmDivision.DivCode == m.TmBranch.DivCode)
                                      .Where(m => m.TmDivision.IsActive == m.TmDivision.IsActive)
                                      .Where(m => m.TmDivision.IsActive.Contains("A"))
-                                     .Where(m => m.TmBranch.CompanyCode.Contains(companycode))
+                                     .Where(m => m.TmBranch.CompanyCode.StartsWith(companycode))
                                      .OrderBy(m => m.TmDivision.DivName)
                                      .Select(m => new Division
                                      {
@@ -254,9 +254,9 @@ namespace ReactPPD.Controllers
                                    .Where(m => m.TmBranch.DivCode == m.TmRegion.TmRegionmap.DivCode)
                                    .Where(m => m.TmRegion.TmRegionmap.IsActive.Contains("A"))
                                    .Where(m => m.TmRegion.TmRegion.RegionCode != "NONE")
-                                   .Where(m => m.TmRegion.TmRegionmap.CompanyCode.Contains(companycode))
-                                   .Where( m => m.TmRegion.TmRegionmap.DivCode.Contains(divcode))
-                                   .Where(m => m.TmRegion.TmRegionmap.RegZoneCode.Contains(regzonecode))
+                                   .Where(m => m.TmRegion.TmRegionmap.CompanyCode.StartsWith(companycode))
+                                   .Where( m => m.TmRegion.TmRegionmap.DivCode.StartsWith(divcode))
+                                   .Where(m => m.TmRegion.TmRegionmap.RegZoneCode.StartsWith(regzonecode))
                                    .OrderBy(m => m.TmRegion.TmRegion.RegionName)
                                    .Select(m => new Region
                                      {
@@ -328,10 +328,10 @@ namespace ReactPPD.Controllers
                                       .Where(m => m.TmZone.RegionCode == m.TmZone.RegionCode)
                                       .Where(m => m.TmZone.RegZoneCode == m.TmZone.RegZoneCode)
                                       .Where(m => m.TmZone.ZoneCode != "NONE")
-                                      .Where(m => m.TmBranch.CompanyCode.Contains(companycode))
-                                      .Where(m => m.TmBranch.DivCode.Contains(divcode))
-                                      .Where(m => m.TmZone.RegionCode.Contains(regioncode))
-                                      .Where(m => m.TmZone.RegZoneCode.Contains(regzonecode))
+                                      .Where(m => m.TmBranch.CompanyCode.StartsWith(companycode))
+                                      .Where(m => m.TmBranch.DivCode.StartsWith(divcode))
+                                      .Where(m => m.TmZone.RegionCode.StartsWith(regioncode))
+                                      .Where(m => m.TmZone.RegZoneCode.StartsWith(regzonecode))
                                       .OrderBy(m => m.TmZone.ZoneName)
                                       .Select(m => new Zone
                                       {
@@ -389,11 +389,11 @@ namespace ReactPPD.Controllers
                 else if (companycode != null && divcode != null && regzonecode != null && zonecode != null)
                 {
                     var tmBranch = await _context.TmBranch
-                                   .Where(i => i.CompanyCode.Contains(companycode))
-                                   .Where(i => i.DivCode.Contains(divcode))
-                                   .Where(i => i.RegZoneCode.Contains(regzonecode))
-                                   .Where(i => i.RegionCode.Contains(regioncode))
-                                   .Where(i => i.ZoneCode.Contains(zonecode))
+                                   .Where(i => i.CompanyCode.StartsWith(companycode))
+                                   .Where(i => i.DivCode.StartsWith(divcode))
+                                   .Where(i => i.RegZoneCode.StartsWith(regzonecode))
+                                   .Where(i => i.RegionCode.StartsWith(regioncode))
+                                   .Where(i => i.ZoneCode.StartsWith(zonecode))
                                    .OrderBy(i => i.BranchName)
                                    .Select(i => new Branch { BranchCode = i.BranchCode, BranchName = i.BranchName })
                                    .ToListAsync();
@@ -463,8 +463,8 @@ namespace ReactPPD.Controllers
                                     .Where(m => m.TmBranch.TmRegzonemap.TmRegzone.RegZoneCode == m.TmDivision.RegZoneCode)
                                     .Where(m => m.TmBranch.TmRegzonemap.TmRegzone.CmpId == m.TmDivision.CompanyCode)
                                     .Where(m => m.TmBranch.TmRegzonemap.TmRegzone.RegZoneCode != "NONE")
-                                    .Where(m => m.TmDivision.CompanyCode.Contains(companycode))
-                                    .Where(m =>m.TmDivision.DivCode.Contains(divcode))
+                                    .Where(m => m.TmDivision.CompanyCode.StartsWith(companycode))
+                                    .Where(m =>m.TmDivision.DivCode.StartsWith(divcode))
                                     .OrderBy(m => m.TmBranch.TmRegzonemap.TmRegzone.RegZoneCode)
                                     .Select(m => new Regzone
                                     {
