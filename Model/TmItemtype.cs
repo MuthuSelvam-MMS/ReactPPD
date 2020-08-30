@@ -70,6 +70,34 @@ namespace ReactPPD.Model
         public string StinDivAc { get; set; }
         [StringLength(12)]
         public string StOutDivAc { get; set; }
+        [StringLength(12)]
+        public string StInZoneAc { get; set; }
+        [StringLength(12)]
+        public string StOutZoneAc { get; set; }
+        [StringLength(12)]
+        public string SaleAsso { get; set; }
+        [StringLength(12)]
+        public string PurAsso { get; set; }
+        [StringLength(12)]
+        public string StInOthAc { get; set; }
+        [StringLength(12)]
+        public string StOutOthAc { get; set; }
+        [StringLength(12)]
+        public string PurAsset { get; set; }
+        [StringLength(12)]
+        public string SalAsset { get; set; }
+        [StringLength(12)]
+        public string FrtInAcMz { get; set; }
+        [StringLength(12)]
+        public string FrtInAcSoya { get; set; }
+        [StringLength(12)]
+        public string SaleRetAcWs { get; set; }
+        [StringLength(12)]
+        public string SaleRetAcOs { get; set; }
+        [StringLength(10)]
+        public string IssuseFlag { get; set; }
+        [StringLength(10)]
+        public string PriceListFlag { get; set; }
 
         [ForeignKey(nameof(FrtInAc))]
         [InverseProperty(nameof(TmAccounts.TmItemtypeFrtInAcNavigation))]

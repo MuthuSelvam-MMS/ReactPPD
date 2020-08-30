@@ -47,51 +47,73 @@ namespace ReactPPD.Controllers
                 var tmitem = await _context.TmItem.FindAsync(ItemCode);
                if(tmitem !=null && tmitem.ItemType.StartsWith("CH") || tmitem.ItemType.StartsWith("FC"))
                 {
-                    var tmItem = await _context.TmItem
-                               .Join(_context.TmMeats, I => I.ItemCode, M => M.MeatsCode, (I, M) => new { TmItem = I, TmMeats = M })                               
-                               .Where(i => i.TmItem.ItemCode == ItemCode)
+                    var tmItem = await _context.TmItem                                  
+                                 .Join(_context.TmItemtype,I =>I.ItemType,B =>B.ItemType,(I,B) => new { TmItem = I, TmItemtype = B })
+                                 .Join(_context.TmItemcategory, I => I.TmItem.Category, C => C.CatgyCode, (I, C) => new { TmItem = I, TmItemcategory = C })
+                                  .Join(_context.TmUom, I => I.TmItem.TmItem.UomBig, D => D.Uom, (I, D) => new { TmItem = I, TmUom = D })
+                                  .Join(_context.TmUom, I => I.TmItem.TmItem.TmItem.UomSmall, E =>E.Uom, (I, E) => new { TmItem = I, TmUom = E })
+                                  .Join(_context.TmUom, I => I.TmItem.TmItem.TmItem.TmItem.UomPur, F=> F.Uom, (I, F) => new { TmItem = I, TmUom = F })
+                                  .Join(_context.TmUom, I => I.TmItem.TmItem.TmItem.TmItem.TmItem.UomStk, G => G.Uom, (I, G) => new { TmItem = I, TmUom = G })
+                                  .Join(_context.TmItem, I => I.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.PrtItem, H => H.ItemCode, (I, H) => new { TmItem = I, H })
+                                 .Join(_context.TmItem, I => I.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ContCode1, J => J.ItemCode, (I, J) => new { TmItem = I, J })
+                                 .Join(_context.TmItem, I => I.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ContCode2, K => K.ItemCode, (I, K) => new { TmItem = I, K })
+                                 .Join(_context.TmItem, I => I.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.PmxCode1, L => L.ItemCode, (I, L) => new { TmItem = I, L })
+                                 .Join(_context.TmItem, I => I.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.PmxCode2, N => N.ItemCode, (I, N) => new { TmItem = I, N })
+                                 .Join(_context.TmMeats, I => I.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ItemCode, M => M.MeatsCode, (I, M) => new { TmItem = I, TmMeats = M })                               
+                                .Where(i => i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ItemCode == ItemCode)
                                .Select(i => new ItemView
                                {
-                                   ItemCode = i.TmItem.ItemCode,
-                                   ItemName = i.TmItem.ItemName,
-                                   ItemSpec = i.TmItem.ItemSpec,
-                                   PartNo = i.TmItem.PartNo,
-                                   ShortName = i.TmItem.ShortName,
-                                   Itemtype = i.TmItem.ItemType,
-                                   Category = i.TmItem.Category,
-                                   ItemGroup = i.TmItem.ItemGroup,
-                                   PrtItem = i.TmItem.PrtItem,
-                                   UomBig = i.TmItem.UomBig,
-                                   UomSmall = i.TmItem.UomSmall,
-                                   UomRelation = i.TmItem.UomRelation,
-                                   UomPur = i.TmItem.UomPur,
-                                   UomStk = i.TmItem.UomStk,
-                                   VisInSpn = i.TmItem.VisInSpn,
-                                   InSpn = i.TmItem.InSpn,
-                                   CashPur = i.TmItem.CashPur,
-                                   Fsn = i.TmItem.Fsn,
-                                   Abc = i.TmItem.Abc,
-                                   IsActive = i.TmItem.IsActive,
-                                   StProdCode = i.TmItem.StProdCode,
-                                   ContCode1 = i.TmItem.ContCode1,
-                                   ContCode2 = i.TmItem.ContCode2,
-                                   PmxCode1 = i.TmItem.PmxCode1,
-                                   PmxCode2 = i.TmItem.PmxCode2,
-                                   Prodnature = i.TmItem.ProdNature,
-                                   Cess = i.TmItem.Cess,
-                                   Nature = i.TmItem.Nature,
-                                   Div = i.TmItem.Div,
-                                   ContCap = (Decimal)i.TmItem.ContCap,
-                                   ContWtConf = i.TmItem.ContWtConf,
-                                   ExpDays = (Int32)i.TmItem.ExpDays,
-                                   InReq = i.TmItem.InReq,
-                                   AcCode = i.TmItem.AcCode,
-                                   AcPostBase = i.TmItem.AcPostBase,
-                                   division = i.TmItem.Division,
-                                   HsnCode = i.TmItem.HsnCode,
-                                   Doses = (Decimal)i.TmItem.Doses,
-                                   NoOfPackets = (Int32)i.TmItem.NoOfPackets,
-                                   StdWt = (Decimal)i.TmItem.StdWt,
+                                   ItemCode = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ItemCode,
+                                   ItemName = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ItemName,
+                                   ItemSpec = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ItemSpec,
+                                   PartNo = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.PartNo,
+                                   ShortName = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ShortName,
+                                   Itemtype = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ItemType,
+                                   ItemDescn = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItemtype.Descn,
+                                   Category = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.Category,
+                                   CatgyName = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItemcategory.CatgyName,
+                                   ItemGroup = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ItemGroup,
+                                   PrtItem = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.PrtItem,
+                                   PrtItemName = i.TmItem.TmItem.TmItem.TmItem.TmItem.H.ItemName,
+                                   UomBig = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.UomBig,
+                                   UomBigName = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmUom.UomName,
+                                   UomSmall = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.UomSmall,
+                                   UomSmallName = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmUom.UomName,
+                                   UomRelation = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.UomRelation,
+                                   UomPur = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.UomPur,
+                                   UomPurName = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmUom.UomName,
+                                   UomStk = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.UomStk,
+                                   UomStkName = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmUom.UomName,
+                                   VisInSpn = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.VisInSpn,
+                                   InSpn = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.InSpn,
+                                   CashPur = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.CashPur,
+                                   Fsn = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.Fsn,
+                                   Abc = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.Abc,
+                                   IsActive = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.IsActive,
+                                   StProdCode = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.StProdCode,
+                                   ContCode1 = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ContCode1,
+                                   ContCode1Name = i.TmItem.TmItem.TmItem.TmItem.J.ItemName,
+                                   ContCode2 = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ContCode2,
+                                   ContCode2Name = i.TmItem.TmItem.TmItem.K.ItemName,
+                                   PmxCode1 = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.PmxCode1,
+                                   PmxCode1Name = i.TmItem.TmItem.L.ItemName,
+                                   PmxCode2 = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.PmxCode2,
+                                   PmxCode2Name = i.TmItem.N.ItemName,
+                                   Prodnature = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ProdNature,
+                                   Cess = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.Cess,
+                                   Nature = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.Nature,
+                                   Div = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.Div,
+                                   ContCap = (Decimal)i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ContCap,
+                                   ContWtConf = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ContWtConf,
+                                   ExpDays = (Int32)i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ExpDays,
+                                   InReq = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.InReq,
+                                   AcCode = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.AcCode,
+                                   AcPostBase = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.AcPostBase,
+                                   division = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.Division,
+                                   HsnCode = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.HsnCode,
+                                   Doses = (Decimal)i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.Doses,
+                                   NoOfPackets = (Int32)i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.NoOfPackets,
+                                   StdWt = (Decimal)i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.StdWt,
                                    MeatsCode = i.TmMeats.MeatsCode,
                                    MeatsName = i.TmMeats.MeatsName,
                                    BranchCode = i.TmMeats.BranchCode,
@@ -117,49 +139,72 @@ namespace ReactPPD.Controllers
                else
                 {
                     var tmItem = await _context.TmItem
-                               .Where(i => i.ItemCode == ItemCode)
+                                 .Join(_context.TmItemtype, I => I.ItemType, B => B.ItemType, (I, B) => new { TmItem = I, TmItemtype = B })
+                                 .Join(_context.TmItemcategory, I => I.TmItem.Category, C => C.CatgyCode, (I, C) => new { TmItem = I, TmItemcategory = C })
+                                  .Join(_context.TmUom, I => I.TmItem.TmItem.UomBig, D => D.Uom, (I, D) => new { TmItem = I, TmUom = D })
+                                  .Join(_context.TmUom, I => I.TmItem.TmItem.TmItem.UomSmall, E => E.Uom, (I, E) => new { TmItem = I, TmUom = E })
+                                  .Join(_context.TmUom, I => I.TmItem.TmItem.TmItem.TmItem.UomPur, F => F.Uom, (I, F) => new { TmItem = I, TmUom = F })
+                                  .Join(_context.TmUom, I => I.TmItem.TmItem.TmItem.TmItem.TmItem.UomStk, G => G.Uom, (I, G) => new { TmItem = I, TmUom = G })
+                                 .Join(_context.TmItem, I => I.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.PrtItem, H => H.ItemCode, (I, H) => new { TmItem =I, H })
+                                 .Join(_context.TmItem, I => I.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ContCode1, J => J.ItemCode, (I, J) => new { TmItem = I, J })
+                                 .Join(_context.TmItem, I=> I.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ContCode2, K =>K.ItemCode, (I, K) => new { TmItem = I, K })
+                                 .Join(_context.TmItem, I => I.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.PmxCode1, L => L.ItemCode, (I, L) => new { TmItem = I, L })
+                                 .Join(_context.TmItem, I => I.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.PmxCode2, N => N.ItemCode, (I, N) => new { TmItem = I, N })                                 
+                                .Where(i => i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ItemCode == ItemCode)
                                .Select(i => new ItemView
                                {
-                                   ItemCode = i.ItemCode,
-                                   ItemName = i.ItemName,
-                                   ItemSpec = i.ItemSpec,
-                                   PartNo = i.PartNo,
-                                   ShortName = i.ShortName,
-                                   Itemtype = i.ItemType,
-                                   Category = i.Category,
-                                   ItemGroup = i.ItemGroup,
-                                   PrtItem = i.PrtItem,
-                                   UomBig = i.UomBig,
-                                   UomSmall = i.UomSmall,
-                                   UomRelation = i.UomRelation,
-                                   UomPur = i.UomPur,
-                                   UomStk = i.UomStk,
-                                   VisInSpn = i.VisInSpn,
-                                   InSpn = i.InSpn,
-                                   CashPur = i.CashPur,
-                                   Fsn = i.Fsn,
-                                   Abc = i.Abc,
-                                   IsActive = i.IsActive,
-                                   StProdCode = i.StProdCode,
-                                   ContCode1 = i.ContCode1,
-                                   ContCode2 = i.ContCode2,
-                                   PmxCode1 = i.PmxCode1,
-                                   PmxCode2 = i.PmxCode2,
-                                   Prodnature = i.ProdNature,
-                                   Cess = i.Cess,
-                                   Nature = i.Nature,
-                                   Div = i.Div,
-                                   ContCap = (Decimal)i.ContCap,
-                                   ContWtConf = i.ContWtConf,
-                                   ExpDays = (Int32)i.ExpDays,
-                                   InReq = i.InReq,
-                                   AcCode = i.AcCode,
-                                   AcPostBase = i.AcPostBase,
-                                   division = i.Division,
-                                   HsnCode = i.HsnCode,
-                                   Doses = (Decimal)i.Doses,
-                                   NoOfPackets = (Int32)i.NoOfPackets,
-                                   StdWt = (Decimal)i.StdWt                                  
+                                   ItemCode = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ItemCode,
+                                   ItemName = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ItemName,
+                                   ItemSpec = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ItemSpec,
+                                   PartNo = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.PartNo,
+                                   ShortName = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ShortName,
+                                   Itemtype = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ItemType,
+                                   ItemDescn = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItemtype.Descn,
+                                   Category = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.Category,
+                                   CatgyName = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItemcategory.CatgyName,
+                                   ItemGroup = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ItemGroup,
+                                   PrtItem = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.PrtItem,
+                                   PrtItemName = i.TmItem.TmItem.TmItem.TmItem.H.ItemName,
+                                   UomBig = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.UomBig,
+                                   UomBigName = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmUom.UomName,
+                                   UomSmall = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.UomSmall,
+                                   UomSmallName = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmUom.UomName,
+                                   UomRelation = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.UomRelation,
+                                   UomPur = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.UomPur,
+                                   UomPurName = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmUom.UomName,
+                                   UomStk = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.UomStk,
+                                   UomStkName = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmUom.UomName,
+                                   VisInSpn = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.VisInSpn,
+                                   InSpn = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.InSpn,
+                                   CashPur = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.CashPur,
+                                   Fsn = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.Fsn,
+                                   Abc = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.Abc,
+                                   IsActive = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.IsActive,
+                                   StProdCode = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.StProdCode,
+                                   ContCode1 = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ContCode1,
+                                   ContCode1Name = i.TmItem.TmItem.TmItem.J.ItemName,
+                                   ContCode2 = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ContCode2,
+                                   ContCode2Name = i.TmItem.TmItem.K.ItemName,
+                                   PmxCode1 = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.PmxCode1,
+                                   PmxCode1Name = i.TmItem.L.ItemName,
+                                   PmxCode2 = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.PmxCode2,
+                                   PmxCode2Name = i.N.ItemName,
+                                   Prodnature = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ProdNature,
+                                   Cess = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.Cess,
+                                   Nature = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.Nature,
+                                   Div = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.Div,
+                                   ContCap = (Decimal)i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ContCap,
+                                   ContWtConf = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ContWtConf,
+                                   ExpDays = (Int32)i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.ExpDays,
+                                   InReq = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.InReq,
+                                   AcCode = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.AcCode,
+                                   AcPostBase = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.AcPostBase,
+                                   division = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.Division,
+                                   HsnCode = i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.HsnCode,
+                                   Doses = (Decimal)i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.Doses,
+                                   NoOfPackets = (Int32)i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.NoOfPackets,
+                                   StdWt = (Decimal)i.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.TmItem.StdWt
+                                  
 
                                }).ToListAsync();
                     if (tmItem.Count == 0)
@@ -827,168 +872,307 @@ namespace ReactPPD.Controllers
                 return BadRequest(new { Message = ex.Response.ReasonPhrase });
             }
         }
-        //[EnableCors("*", "*", "*")]
-        //[HttpPost("ItemCode")]
-        //public async IAsyncEnumerable<TmItem> GetTmItem(string itemname)
-        //{
-        //    //    var tmItem = await _context.TmItem.FindAsync(id);
-        //    var tmItem = (from i in _context.TmItem
-        //                  where i.ItemName.StartsWith(itemname) && i.IsActive.StartsWith('A')
-        //                  orderby i.ItemName
-        //                  select new TmItem { ItemCode = i.ItemCode, ItemName = i.ItemName }).AsAsyncEnumerable();
-        //    Console.WriteLine(tmItem);
-        //    //    if (tmItem == null)
-        //    //    {
-        //    //        return NotFound();
-        //    //    }
-        //    await foreach (var item in tmItem)
-        //    {
-        //        yield return item;
-        //    }
-        //}
 
-        // PUT: api/TmItems/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTmItem(string id, TmItem tmItem)
-        {
-            if (id != tmItem.ItemCode)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(tmItem).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TmItemExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/TmItems
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost("SaveUpdate")]
-        public async Task<ActionResult<Response>> PostTmItem(string branchcode, int acyear, string section, string gradesection, string sectionname, string itemcode, TmItem tmItem)
+        public async Task<ActionResult<Response>> PostTmItem(ItemView tmItemView)
         {
-            if (itemcode != tmItem.ItemCode)
-            {                
-                if (tmItem.ItemType.StartsWith("CH") || tmItem.ItemType.StartsWith("FC"))
+            TmItem newtmItem = new TmItem();
+            TmMeats newtmMeats = new TmMeats();
+            var tmItems = await _context.TmItem.FindAsync(tmItemView.ItemCode);
+            var tmMeats = await _context.TmMeats.FindAsync(tmItemView.MeatsCode);
+           
+                if (tmItems == null)
                 {
-                    TmMeats tmmeats = new TmMeats();
-                    tmmeats.MeatsCode = tmItem.ItemCode;
-                    tmmeats.MeatsName = tmItem.ItemName;
-                    tmmeats.BranchCode = branchcode;
-                    tmmeats.AcYearNo = acyear;
-                    tmmeats.IsActive = tmItem.IsActive;
-                    tmmeats.Uom = tmItem.UomPur;
-                    tmmeats.Section = section;
-                    tmmeats.GradeSection = gradesection;
-                    tmmeats.SectionName = sectionname;
-                    _context.TmMeats.Add(tmmeats);
-                }
-                _context.TmItem.Add(tmItem);
+                    if (tmItemView.Itemtype.StartsWith("CH") || tmItemView.Itemtype.StartsWith("FC"))
+                    {
+                        
+                        newtmItem.ItemCode = tmItemView.ItemCode;
+                        newtmItem.ItemName = tmItemView.ItemName;
+                        newtmItem.ItemSpec = tmItemView.ItemSpec;
+                        newtmItem.PartNo = tmItemView.PartNo;
+                        newtmItem.ShortName = tmItemView.ShortName;
+                        newtmItem.ItemType = tmItemView.Itemtype;
+                        newtmItem.Category = tmItemView.Category;
+                        newtmItem.ItemGroup = tmItemView.ItemGroup;
+                        newtmItem.PrtItem = tmItemView.PrtItem;
+                        newtmItem.UomBig = tmItemView.UomBig;
+                        newtmItem.UomSmall = tmItemView.UomSmall;
+                        newtmItem.UomRelation = tmItemView.UomRelation;
+                        newtmItem.UomPur = tmItemView.UomPur;
+                        newtmItem.UomStk = tmItemView.UomStk;
+                        newtmItem.VisInSpn = tmItemView.VisInSpn;
+                        newtmItem.InSpn = tmItemView.InSpn;
+                        newtmItem.CashPur = tmItemView.CashPur;
+                        newtmItem.Fsn = tmItemView.Fsn;
+                        newtmItem.Abc = tmItemView.Abc;
+                        newtmItem.IsActive = tmItemView.IsActive;
+                        newtmItem.StProdCode = tmItemView.StProdCode;
+                        newtmItem.ContCode1 = tmItemView.ContCode1;
+                        newtmItem.ContCode2 = tmItemView.ContCode2;
+                        newtmItem.PmxCode1 = tmItemView.PmxCode1;
+                        newtmItem.PmxCode2 = tmItemView.PmxCode2;
+                        newtmItem.ProdNature = tmItemView.Prodnature;
+                        newtmItem.Cess = tmItemView.Cess;
+                        newtmItem.Nature = tmItemView.Nature;
+                        newtmItem.Div = tmItemView.Div;
+                        newtmItem.ContCap = (Decimal)tmItemView.ContCap;
+                        newtmItem.ContWtConf = tmItemView.ContWtConf;
+                        newtmItem.ExpDays = (Int32)tmItemView.ExpDays;
+                        newtmItem.InReq = tmItemView.InReq;
+                        newtmItem.AcCode = tmItemView.AcCode;
+                        newtmItem.AcPostBase = tmItemView.AcPostBase;
+                        newtmItem.Division = tmItemView.division;
+                        newtmItem.HsnCode = tmItemView.HsnCode;
+                        newtmItem.Doses = (Decimal)tmItemView.Doses;
+                        newtmItem.NoOfPackets = (Int32)tmItemView.NoOfPackets;
+                        newtmItem.StdWt = (Decimal)tmItemView.StdWt;
+                        newtmMeats.MeatsCode = tmItemView.MeatsCode;
+                        newtmMeats.MeatsName = tmItemView.MeatsName;
+                        newtmMeats.BranchCode = tmItemView.BranchCode;
+                        newtmMeats.AcYearNo = tmItemView.AcYearNo;
+                        newtmMeats.Uom = tmItemView.Uom;
+                        newtmMeats.Section = tmItemView.Section;
+                        newtmMeats.GradeSection = tmItemView.GradeSection;
+                        newtmMeats.SectionName = tmItemView.SectionName;
+                        _context.TmItem.Add(newtmItem);
+                        _context.TmMeats.Add(newtmMeats);
+                     //   await _context.SaveChangesAsync();
+                    }
+                    else
+                      { 
+                        newtmItem.ItemCode = tmItemView.ItemCode;
+                        newtmItem.ItemName = tmItemView.ItemName;
+                        newtmItem.ItemSpec = tmItemView.ItemSpec;
+                        newtmItem.PartNo = tmItemView.PartNo;
+                        newtmItem.ShortName = tmItemView.ShortName;
+                        newtmItem.ItemType = tmItemView.Itemtype;
+                        newtmItem.Category = tmItemView.Category;
+                        newtmItem.ItemGroup = tmItemView.ItemGroup;
+                        newtmItem.PrtItem = tmItemView.PrtItem;
+                        newtmItem.UomBig = tmItemView.UomBig;
+                        newtmItem.UomSmall = tmItemView.UomSmall;
+                        newtmItem.UomRelation =(Decimal)tmItemView.UomRelation;
+                        newtmItem.UomPur = tmItemView.UomPur;
+                        newtmItem.UomStk = tmItemView.UomStk;
+                        newtmItem.VisInSpn = tmItemView.VisInSpn;
+                        newtmItem.InSpn = tmItemView.InSpn;
+                        newtmItem.CashPur = tmItemView.CashPur;
+                        newtmItem.Fsn = tmItemView.Fsn;
+                        newtmItem.Abc = tmItemView.Abc;
+                        newtmItem.IsActive = tmItemView.IsActive;
+                        newtmItem.StProdCode = tmItemView.StProdCode;
+                        newtmItem.ContCode1 = tmItemView.ContCode1;
+                        newtmItem.ContCode2 = tmItemView.ContCode2;
+                        newtmItem.PmxCode1 = tmItemView.PmxCode1;
+                        newtmItem.PmxCode2 = tmItemView.PmxCode2;
+                        newtmItem.ProdNature = tmItemView.Prodnature;
+                        newtmItem.Cess = tmItemView.Cess;
+                        newtmItem.Nature = tmItemView.Nature;
+                        newtmItem.Div = tmItemView.Div;
+                        newtmItem.ContCap = (Decimal)tmItemView.ContCap;
+                        newtmItem.ContWtConf = tmItemView.ContWtConf;
+                        newtmItem.ExpDays = (Int32)tmItemView.ExpDays;
+                        newtmItem.InReq = tmItemView.InReq;
+                        newtmItem.AcCode = tmItemView.AcCode;
+                        newtmItem.AcPostBase = tmItemView.AcPostBase;
+                        newtmItem.Division = tmItemView.division;
+                        newtmItem.HsnCode = tmItemView.HsnCode;
+                        newtmItem.Doses = (Decimal)tmItemView.Doses;
+                        newtmItem.NoOfPackets = (Int32)tmItemView.NoOfPackets;
+                        newtmItem.StdWt = (Decimal)tmItemView.StdWt;
+                        _context.TmItem.Add(newtmItem);                 
+                    
+                    }
+                
                 try
                 {
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateException)
                 {
-                    if (TmItemExists(tmItem.ItemCode))
+                    if (TmItemExists(tmItemView.ItemCode)|| TmMeatExists(tmItemView.MeatsCode))
                     {
                         return new Response { Status = "Conflict", Message = "Record Already Exist" };
                     }
                 }
 
                 return new Response { Status = "SUCCESSFULL", Message = "SAVED SUCCESSFULLY" };
+
             }
-            else if (itemcode == tmItem.ItemCode)
+
+            if (tmItems != null)
             {
-                TmMeats tmmeats = new TmMeats();
-                TmItem updtmItem = new TmItem();
-                if (tmItem.ItemType.StartsWith("CH") || tmItem.ItemType.StartsWith("FC"))
+                if (tmItems.ItemType.StartsWith("CH") || tmItems.ItemType.StartsWith("FC"))
                 {
-                    tmmeats.MeatsCode = tmItem.ItemCode;                  
-                    tmmeats.Uom = tmItem.UomPur;
-                    tmmeats.Section = section;
-                    tmmeats.GradeSection = gradesection;
-                    tmmeats.SectionName = sectionname;
-                    
+                    tmItems.ItemName = tmItemView.ItemName;
+                    tmItems.ItemSpec = tmItemView.ItemSpec;
+                    tmItems.PartNo = tmItemView.PartNo;
+                    tmItems.ShortName = tmItemView.ShortName;
+                    tmItems.Category = tmItemView.Category;
+                    tmItems.ItemGroup = tmItemView.ItemGroup;
+                    tmItems.UomRelation = (Decimal)tmItemView.UomRelation;
+                    tmItems.UomPur = tmItemView.UomPur;
+                    tmItems.VisInSpn = tmItemView.VisInSpn;
+                    tmItems.InSpn = tmItemView.InSpn;
+                    tmItems.CashPur = tmItemView.CashPur;
+                    tmItems.ContCode1 = tmItemView.ContCode1;
+                    tmItems.ContCode2 = tmItemView.ContCode2;
+                    tmItems.PmxCode1 = tmItemView.PmxCode1;
+                    tmItems.PmxCode2 = tmItemView.PmxCode2;
+                    tmItems.ProdNature = tmItemView.Prodnature;
+                    tmItems.HsnCode = tmItemView.HsnCode;
+                    tmItems.StdWt = (Decimal)tmItemView.StdWt;                    
+                    tmMeats.MeatsName = tmItemView.MeatsName;
+                    tmMeats.Uom = tmItemView.Uom;
+                    tmMeats.Section = tmItemView.Section;
+                    tmMeats.GradeSection = tmItemView.GradeSection;
+                    tmMeats.SectionName = tmItemView.SectionName;
+                    _context.Entry(newtmItem).State = EntityState.Modified;
+                    _context.Entry(newtmMeats).State = EntityState.Modified;
 
-                    _context.Entry(tmmeats).State = EntityState.Modified;      
-                    
                 }
-               /* updtmItem.ItemCode = tmItem.ItemCode;
-                updtmItem.ItemName = tmItem.ItemName;
-                updtmItem.ItemSpec = tmItem.ItemSpec;
-                updtmItem.PartNo = tmItem.PartNo;
-                updtmItem.ShortName = tmItem.ShortName;
-                updtmItem.Category = tmItem.Category;
-                updtmItem.ItemGroup = tmItem.ItemGroup;
-                updtmItem.UomRelation = tmItem.UomRelation;
-                updtmItem.UomPur = tmItem.UomPur;
-                updtmItem.VisInSpn = tmItem.VisInSpn;
-                updtmItem.InSpn = tmItem.InSpn;
-                updtmItem.CashPur = tmItem.CashPur;
-                updtmItem.ContCode1 = tmItem.ContCode1;
-                updtmItem.ContCode2 = tmItem.ContCode2;
-                updtmItem.PmxCode1 = tmItem.PmxCode1;
-                updtmItem.PmxCode2 = tmItem.PmxCode2;
-                updtmItem.ProdNature = tmItem.ProdNature;
-                updtmItem.HsnCode = tmItem.HsnCode;
-                updtmItem.StdWt = tmItem.StdWt;*/
-               _context.Entry(tmItem).State = EntityState.Modified;
-
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TmItemExists(itemcode) || tmmeats.MeatsCode != itemcode)
+                else
                 {
-                    return new Response { Status = "NotFound", Message = "Record Not Found" };
+                   // newtmItem.ItemCode = tmItemView.ItemCode;
+                    tmItems.ItemName = tmItemView.ItemName;
+                    tmItems.ItemSpec = tmItemView.ItemSpec;
+                    tmItems.PartNo = tmItemView.PartNo;
+                    tmItems.ShortName = tmItemView.ShortName;
+                    tmItems.Category = tmItemView.Category;
+                    tmItems.ItemGroup = tmItemView.ItemGroup;
+                    tmItems.UomRelation = (Decimal)tmItemView.UomRelation;
+                    tmItems.UomPur = tmItemView.UomPur;                    
+                    tmItems.VisInSpn = tmItemView.VisInSpn;
+                    tmItems.InSpn = tmItemView.InSpn;
+                    tmItems.CashPur = tmItemView.CashPur;
+                    tmItems.ContCode1 = tmItemView.ContCode1;
+                    tmItems.ContCode2 = tmItemView.ContCode2;
+                    tmItems.PmxCode1 = tmItemView.PmxCode1;
+                    tmItems.PmxCode2 = tmItemView.PmxCode2;
+                    tmItems.ProdNature = tmItemView.Prodnature;
+                    tmItems.HsnCode = tmItemView.HsnCode;
+                    tmItems.StdWt = (Decimal)tmItemView.StdWt;
+                    _context.Entry(tmItems).State = EntityState.Modified;
                 }
-                    else { 
-                        return new Response { Status = "Not Allowed", Message = "Update Not Allowed" }; }
-                
-            }
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!TmItemExists(tmItemView.ItemCode) || !TmMeatExists(tmItemView.MeatsCode))
+                    {
+                        return new Response { Status = "NotFound", Message = "Record Not Found" };
+                    }
+                    else
+                    {
+                        return new Response { Status = "Not Allowed", Message = "Update Not Allowed" };
+                    }
 
-            return new Response { Status = "Updated", Message = "Record Updated Sucessfull" }; 
+                }
+
+                return new Response { Status = "Updated", Message = "Record Updated Sucessfull" };
             }
             return null;
-        }
-        // DELETE: api/TmItems/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<TmItem>> DeleteTmItem(string id)
-        {
-            var tmItem = await _context.TmItem.FindAsync(id);
-            if (tmItem == null)
-            {
-                return NotFound();
-            }
+    }
 
-            _context.TmItem.Remove(tmItem);
-            await _context.SaveChangesAsync();
+     
 
-            return tmItem;
-        }
+        // POST: api/TmItems
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        //[HttpPost("SaveUpdate")]
+        //public async Task<ActionResult<Response>> PostTmItem(string branchcode, int acyear, string section, string gradesection, string sectionname, string itemcode, TmItem tmItem)
+        //{
+        //    if (itemcode != tmItem.ItemCode)
+        //    {                
+        //        if (tmItem.ItemType.StartsWith("CH") || tmItem.ItemType.StartsWith("FC"))
+        //        {
+        //            TmMeats tmmeats = new TmMeats();
+        //            tmmeats.MeatsCode = tmItem.ItemCode;
+        //            tmmeats.MeatsName = tmItem.ItemName;
+        //            tmmeats.BranchCode = branchcode;
+        //            tmmeats.AcYearNo = acyear;
+        //            tmmeats.IsActive = tmItem.IsActive;
+        //            tmmeats.Uom = tmItem.UomPur;
+        //            tmmeats.Section = section;
+        //            tmmeats.GradeSection = gradesection;
+        //            tmmeats.SectionName = sectionname;
+        //            _context.TmMeats.Add(tmmeats);
+        //        }
+        //        _context.TmItem.Add(tmItem);
+        //        try
+        //        {
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateException)
+        //        {
+        //            if (TmItemExists(tmItem.ItemCode))
+        //            {
+        //                return new Response { Status = "Conflict", Message = "Record Already Exist" };
+        //            }
+        //        }
 
+        //        return new Response { Status = "SUCCESSFULL", Message = "SAVED SUCCESSFULLY" };
+        //    }
+        //    else if (itemcode == tmItem.ItemCode)
+        //    {
+        //        TmMeats tmmeats = new TmMeats();
+        //        TmItem updtmItem = new TmItem();
+        //        if (tmItem.ItemType.StartsWith("CH") || tmItem.ItemType.StartsWith("FC"))
+        //        {
+        //            tmmeats.MeatsCode = tmItem.ItemCode;                  
+        //            tmmeats.Uom = tmItem.UomPur;
+        //            tmmeats.Section = section;
+        //            tmmeats.GradeSection = gradesection;
+        //            tmmeats.SectionName = sectionname;
+                    
+
+        //            _context.Entry(tmmeats).State = EntityState.Modified;      
+                    
+        //        }
+        //       /* updtmItem.ItemCode = tmItem.ItemCode;
+        //        updtmItem.ItemName = tmItem.ItemName;
+        //        updtmItem.ItemSpec = tmItem.ItemSpec;
+        //        updtmItem.PartNo = tmItem.PartNo;
+        //        updtmItem.ShortName = tmItem.ShortName;
+        //        updtmItem.Category = tmItem.Category;
+        //        updtmItem.ItemGroup = tmItem.ItemGroup;
+        //        updtmItem.UomRelation = tmItem.UomRelation;
+        //        updtmItem.UomPur = tmItem.UomPur;
+        //        updtmItem.VisInSpn = tmItem.VisInSpn;
+        //        updtmItem.InSpn = tmItem.InSpn;
+        //        updtmItem.CashPur = tmItem.CashPur;
+        //        updtmItem.ContCode1 = tmItem.ContCode1;
+        //        updtmItem.ContCode2 = tmItem.ContCode2;
+        //        updtmItem.PmxCode1 = tmItem.PmxCode1;
+        //        updtmItem.PmxCode2 = tmItem.PmxCode2;
+        //        updtmItem.ProdNature = tmItem.ProdNature;
+        //        updtmItem.HsnCode = tmItem.HsnCode;
+        //        updtmItem.StdWt = tmItem.StdWt;*/
+        //       _context.Entry(tmItem).State = EntityState.Modified;
+
+
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!TmItemExists(itemcode) || tmmeats.MeatsCode != itemcode)
+        //        {
+        //            return new Response { Status = "NotFound", Message = "Record Not Found" };
+        //        }
+        //            else { 
+        //                return new Response { Status = "Not Allowed", Message = "Update Not Allowed" }; }
+                
+        //    }
+
+        //    return new Response { Status = "Updated", Message = "Record Updated Sucessfull" }; 
+        //    }
+        //    return null;
+        //}
+       
         private bool TmItemExists(string id)
         {
             return _context.TmItem.Any(e => e.ItemCode == id);

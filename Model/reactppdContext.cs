@@ -6,7 +6,8 @@ namespace ReactPPD.Model
 {
     public partial class reactppdContext : DbContext
     {
-               public reactppdContext(DbContextOptions<reactppdContext> options)
+       
+        public reactppdContext(DbContextOptions<reactppdContext> options)
             : base(options)
         {
         }
@@ -39,6 +40,7 @@ namespace ReactPPD.Model
         public virtual DbSet<TmMenuitem> TmMenuitem { get; set; }
         public virtual DbSet<TmPartytype> TmPartytype { get; set; }
         public virtual DbSet<TmPlace> TmPlace { get; set; }
+        public virtual DbSet<TmPricelist> TmPricelist { get; set; }
         public virtual DbSet<TmProdnature> TmProdnature { get; set; }
         public virtual DbSet<TmReason> TmReason { get; set; }
         public virtual DbSet<TmRegion> TmRegion { get; set; }
@@ -55,7 +57,9 @@ namespace ReactPPD.Model
         public virtual DbSet<TmVendor> TmVendor { get; set; }
         public virtual DbSet<TmZone> TmZone { get; set; }
         public virtual DbSet<TtShedready> TtShedready { get; set; }
-              protected override void OnModelCreating(ModelBuilder modelBuilder)
+             
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<TmAcbrmap>(entity =>
             {
@@ -2115,11 +2119,21 @@ namespace ReactPPD.Model
 
                 entity.Property(e => e.FrtInAc).IsUnicode(false);
 
+                entity.Property(e => e.FrtInAcMz)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.FrtInAcSoya)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
                 entity.Property(e => e.FrtOutAc).IsUnicode(false);
 
                 entity.Property(e => e.IsActive)
                     .IsUnicode(false)
                     .HasDefaultValueSql("'A'");
+
+                entity.Property(e => e.IssuseFlag).IsUnicode(false);
 
                 entity.Property(e => e.Nature)
                     .IsUnicode(false)
@@ -2133,11 +2147,21 @@ namespace ReactPPD.Model
 
                 entity.Property(e => e.PackingAc).IsUnicode(false);
 
+                entity.Property(e => e.PriceListFlag).IsUnicode(false);
+
                 entity.Property(e => e.PurAcOs)
                     .IsUnicode(false)
                     .HasDefaultValueSql("'NONE'");
 
                 entity.Property(e => e.PurAcWs)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.PurAsset)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.PurAsso)
                     .IsUnicode(false)
                     .HasDefaultValueSql("'NONE'");
 
@@ -2155,6 +2179,10 @@ namespace ReactPPD.Model
 
                 entity.Property(e => e.RoundOff).IsUnicode(false);
 
+                entity.Property(e => e.SalAsset)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
                 entity.Property(e => e.SaleAcOs)
                     .IsUnicode(false)
                     .HasDefaultValueSql("'NONE'");
@@ -2163,7 +2191,27 @@ namespace ReactPPD.Model
                     .IsUnicode(false)
                     .HasDefaultValueSql("'NONE'");
 
+                entity.Property(e => e.SaleAsso)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.SaleRetAcOs)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.SaleRetAcWs)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
                 entity.Property(e => e.StInAc)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.StInOthAc)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.StInZoneAc)
                     .IsUnicode(false)
                     .HasDefaultValueSql("'NONE'");
 
@@ -2172,6 +2220,14 @@ namespace ReactPPD.Model
                     .HasDefaultValueSql("'NONE'");
 
                 entity.Property(e => e.StOutDivAc)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.StOutOthAc)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.StOutZoneAc)
                     .IsUnicode(false)
                     .HasDefaultValueSql("'NONE'");
 
@@ -2622,6 +2678,76 @@ namespace ReactPPD.Model
                     .HasForeignKey(d => d.TalukCode)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_PlaceTalukCode");
+            });
+
+            modelBuilder.Entity<TmPricelist>(entity =>
+            {
+                entity.HasKey(e => new { e.DocIntNo, e.BranchCode, e.ItemCode, e.PartyCode, e.Age, e.ItemNature })
+                    .HasName("PRIMARY");
+
+                entity.HasIndex(e => new { e.BranchCode, e.DocNo, e.ItemCode, e.PartyCode, e.Age, e.ItemNature })
+                    .HasName("UK_PriceListDocIntNo")
+                    .IsUnique();
+
+                entity.HasIndex(e => new { e.BranchCode, e.DocNo, e.PricingType, e.ItemCode, e.PartyCode, e.Age, e.ItemNature })
+                    .HasName("UK_PriceList")
+                    .IsUnique();
+
+                entity.Property(e => e.BranchCode).IsUnicode(false);
+
+                entity.Property(e => e.ItemCode).IsUnicode(false);
+
+                entity.Property(e => e.PartyCode)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.Age)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'1'");
+
+                entity.Property(e => e.ItemNature)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'R'");
+
+                entity.Property(e => e.CompanyCode)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.DivCode)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.DocNo).IsUnicode(false);
+
+                entity.Property(e => e.IsActive)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'A'");
+
+                entity.Property(e => e.LogBrCode).IsUnicode(false);
+
+                entity.Property(e => e.PricingType)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'IP'");
+
+                entity.Property(e => e.RegCode).IsUnicode(false);
+
+                entity.Property(e => e.RegName).IsUnicode(false);
+
+                entity.Property(e => e.RegZoneCode)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.RegionCode)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.SubBrCode)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
+
+                entity.Property(e => e.ZoneCode)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NONE'");
             });
 
             modelBuilder.Entity<TmProdnature>(entity =>
