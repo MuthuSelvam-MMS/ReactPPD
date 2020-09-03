@@ -203,13 +203,24 @@ namespace ReactPPD.Controllers
         }
 
         [HttpPost("ViewItemCategory")]
-        public async Task<ActionResult<IEnumerable<TmItemcategory>>> ViewTmItemcategory(string CatgyCode)
+        public async Task<ActionResult<List<ItemCategory>>> ViewTmItemcategory(string CatgyCode)
         {
             try
             {
                 var tmItemcategory = await _context.TmItemcategory
-                            .Where(i => i.CatgyCode == CatgyCode)
-                            .Select(i => i).ToListAsync();
+                                     .Join(_context.TmItemcategory,A =>A.PrtCode,B => B.CatgyCode,(A,B) => new {TmItemcategory = A, B })
+                                     .Join(_context.TmItemcategory,A =>A.TmItemcategory.GprtCode ,C => C.CatgyCode,(A,C) => new {TmItemcategory = A ,C })
+                                     .Where(i => i.TmItemcategory.TmItemcategory.CatgyCode == CatgyCode)
+                                     .Select(i => new ItemCategory
+                                     {
+                                        CatgyCode = i.TmItemcategory.TmItemcategory.CatgyCode,
+                                        CatgyName = i.TmItemcategory.TmItemcategory.CatgyName,
+                                        PrtCode = i.TmItemcategory.TmItemcategory.PrtCode,
+                                        PrtName = i.TmItemcategory.B.CatgyName,
+                                        GprtCode = i.TmItemcategory.TmItemcategory.GprtCode,
+                                        GprtName =i.C.CatgyName,
+                                        IsActive = i.TmItemcategory.TmItemcategory.IsActive
+                                     }).ToListAsync();
                 if (tmItemcategory.Count == 0)
                 {
                     var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
@@ -228,47 +239,19 @@ namespace ReactPPD.Controllers
             }
         }
 
-        // PUT: api/TmItemcategories/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-      /*  [HttpPut("{id}")]
-        public async Task<IActionResult> PutTmItemcategory(string id, TmItemcategory tmItemcategory)
-        {
-            if (id != tmItemcategory.CatgyCode)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(tmItemcategory).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TmItemcategoryExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }*/
-
-        // POST: api/TmItemcategories
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost("SaveUpdate")]
-        public async Task<ActionResult<Response>> PostTmItemcategory(string catgycode,TmItemcategory tmItemcategory)
+        public async Task<ActionResult<Response>> PostTmItemcategory(ItemCategory tmItemcategory)
         {
-            if (catgycode != tmItemcategory.CatgyCode)
+            var itemcategory = await _context.TmItemcategory.FindAsync(tmItemcategory.CatgyCode);
+            TmItemcategory newitemcategory = new TmItemcategory();
+            if(itemcategory == null)
             {
-                _context.TmItemcategory.Add(tmItemcategory);
+                newitemcategory.CatgyCode = tmItemcategory.CatgyCode;
+                newitemcategory.CatgyName = tmItemcategory.CatgyName;
+                newitemcategory.PrtCode = tmItemcategory.PrtCode;
+                newitemcategory.GprtCode = tmItemcategory.GprtCode;
+                newitemcategory.IsActive = tmItemcategory.IsActive;
+                _context.TmItemcategory.Add(newitemcategory);
                 try
                 {
                     await _context.SaveChangesAsync();
@@ -277,58 +260,89 @@ namespace ReactPPD.Controllers
                 {
                     if (TmItemcategoryExists(tmItemcategory.CatgyCode))
                     {
+
                         return new Response { Status = "Conflict", Message = "Record Already Exist" };
                     }
                 }
                 return new Response { Status = "SUCCESSFULL", Message = "SAVED SUCCESSFULLY" };
 
             }
-            else if (catgycode == tmItemcategory.CatgyCode)
+            if(itemcategory != null)
             {
-                /* {
-                     return BadRequest();
-                 }*/
-
-                _context.Entry(tmItemcategory).State = EntityState.Modified;
-
+                itemcategory.CatgyName = tmItemcategory.CatgyName;
+                itemcategory.PrtCode = tmItemcategory.PrtCode;
+                itemcategory.GprtCode = tmItemcategory.GprtCode;
+                itemcategory.IsActive = tmItemcategory.IsActive;
                 try
                 {
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TmItemcategoryExists(catgycode))
+                    if (!TmItemcategoryExists(tmItemcategory.CatgyCode))
                     {
-
                         return new Response { Status = "NotFound", Message = "Record Not Found" };
                     }
-                    /* else
-                     {
-                         throw;
-                     }*/
-                }
+                    else
+                    {
+                        return new Response { Status = "Not Allowed", Message = "Update Not Allowed" };
+                    }
 
+                }
                 return new Response { Status = "Updated", Message = "Record Updated Sucessfull" };
             }
             return null;
         }
+       
+        //[HttpPost("SaveUpdate")]
+        //public async Task<ActionResult<Response>> PostTmItemcategory(string catgycode,TmItemcategory tmItemcategory)
+        //{
+        //    if (catgycode != tmItemcategory.CatgyCode)
+        //    {
+        //        _context.TmItemcategory.Add(tmItemcategory);
+        //        try
+        //        {
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateException)
+        //        {
+        //            if (TmItemcategoryExists(tmItemcategory.CatgyCode))
+        //            {
+        //                return new Response { Status = "Conflict", Message = "Record Already Exist" };
+        //            }
+        //        }
+        //        return new Response { Status = "SUCCESSFULL", Message = "SAVED SUCCESSFULLY" };
 
-        // DELETE: api/TmItemcategories/5
-       /* [HttpDelete("{id}")]
-        public async Task<ActionResult<TmItemcategory>> DeleteTmItemcategory(string id)
-        {
-            var tmItemcategory = await _context.TmItemcategory.FindAsync(id);
-            if (tmItemcategory == null)
-            {
-                return NotFound();
-            }
+        //    }
+        //    else if (catgycode == tmItemcategory.CatgyCode)
+        //    {
+        //        /* {
+        //             return BadRequest();
+        //         }*/
 
-            _context.TmItemcategory.Remove(tmItemcategory);
-            await _context.SaveChangesAsync();
+        //        _context.Entry(tmItemcategory).State = EntityState.Modified;
 
-            return tmItemcategory;
-        }*/
+        //        try
+        //        {
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            if (!TmItemcategoryExists(catgycode))
+        //            {
 
+        //                return new Response { Status = "NotFound", Message = "Record Not Found" };
+        //            }
+        //            /* else
+        //             {
+        //                 throw;
+        //             }*/
+        //        }
+
+        //        return new Response { Status = "Updated", Message = "Record Updated Sucessfull" };
+        //    }
+        //    return null;
+        //}
         private bool TmItemcategoryExists(string id)
         {
             return _context.TmItemcategory.Any(e => e.CatgyCode == id);

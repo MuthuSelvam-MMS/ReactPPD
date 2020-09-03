@@ -276,66 +276,7 @@ namespace ReactPPD.Controllers
         //    }
         //    return null;
         //}
-        // PUT: api/TmGrpschedules/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTmGrpschedule(int id, TmGrpschedule tmGrpschedule)
-        {
-            if (id != tmGrpschedule.SchNo)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(tmGrpschedule).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TmGrpscheduleExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/TmGrpschedules
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPost]
-        public async Task<ActionResult<TmGrpschedule>> PostTmGrpschedule(TmGrpschedule tmGrpschedule)
-        {
-            _context.TmGrpschedule.Add(tmGrpschedule);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetTmGrpschedule", new { id = tmGrpschedule.SchNo }, tmGrpschedule);
-        }
-
-        // DELETE: api/TmGrpschedules/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<TmGrpschedule>> DeleteTmGrpschedule(int id)
-        {
-            var tmGrpschedule = await _context.TmGrpschedule.FindAsync(id);
-            if (tmGrpschedule == null)
-            {
-                return NotFound();
-            }
-
-            _context.TmGrpschedule.Remove(tmGrpschedule);
-            await _context.SaveChangesAsync();
-
-            return tmGrpschedule;
-        }
-
+             
         private bool TmGrpscheduleExists(int id)
         {
             return _context.TmGrpschedule.Any(e => e.SchNo == id);

@@ -10,6 +10,9 @@ namespace ReactPPD.VM
         public string CatgyCode { get; set; }
         public string CatgyName { get; set; }
         public string PrtCode { get; set; }
+        public string PrtName{ get; set; }
         public string GprtCode { get; set; }
+        public string GprtName { get; set; }
+        public string IsActive { get; set; }
     }
 }
