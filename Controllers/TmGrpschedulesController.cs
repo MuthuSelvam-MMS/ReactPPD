@@ -177,11 +177,17 @@ namespace ReactPPD.Controllers
         }
 
         [HttpPost("SaveUpdate")]
-        public async Task<ActionResult<Response>> PostTmGrpschedule(int schno,TmGrpschedule tmGrpschedule)
+        public async Task<ActionResult<Response>> PostTmGrpschedule(GrpSchedule tmGrpschedule)
         {
-            if (schno != tmGrpschedule.SchNo)
+            var grpSchedule = await _context.TmGrpschedule.FindAsync(tmGrpschedule.SchNo);
+            TmGrpschedule newtmgrpSchedule = new TmGrpschedule();
+            if(grpSchedule == null)
             {
-                _context.TmGrpschedule.Add(tmGrpschedule);
+                newtmgrpSchedule.SchNo = tmGrpschedule.SchNo;
+                newtmgrpSchedule.SchName = tmGrpschedule.SchName;
+                newtmgrpSchedule.PrtSchNo = tmGrpschedule.PrtSchNo;
+                newtmgrpSchedule.IsActive = tmGrpschedule.IsActive;
+                _context.TmGrpschedule.Add(newtmgrpSchedule);
                 try
                 {
                     await _context.SaveChangesAsync();
@@ -190,39 +196,86 @@ namespace ReactPPD.Controllers
                 {
                     if (TmGrpscheduleExists(tmGrpschedule.SchNo))
                     {
-                        //return Conflict();
+                        
                         return new Response { Status = "Conflict", Message = "Record Already Exist" };
                     }
                 }
                 return new Response { Status = "SUCCESSFULL", Message = "SAVED SUCCESSFULLY" };
-                // return CreatedAtAction("GetTmCostcenter", new { id = tmCostcenter.CcCode }, tmCostcenter);
-            }
-            else if (schno == tmGrpschedule.SchNo)
-            {
-                _context.Entry(tmGrpschedule).State = EntityState.Modified;
 
+            }
+            if(grpSchedule != null)
+            {
+                grpSchedule.SchName = tmGrpschedule.SchName;
+                grpSchedule.PrtSchNo = tmGrpschedule.PrtSchNo;
+                grpSchedule.IsActive = tmGrpschedule.IsActive;
+                _context.Entry(grpSchedule).State = EntityState.Modified;
                 try
                 {
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TmGrpscheduleExists(schno))
-                    {
-                        //return NotFound();
+                    if (!TmGrpscheduleExists(grpSchedule.SchNo))
+                    {                        
                         return new Response { Status = "NotFound", Message = "Record Not Found" };
                     }
-                    /* else
-                     {
-                         throw;
-                     }*/
-                }
+                    else
+                    {
+                        return new Response { Status = "Not Allowed", Message = "Update Not Allowed" };
+                    }
 
-                // return NoContent();
+                }               
                 return new Response { Status = "Updated", Message = "Record Updated Sucessfull" };
             }
             return null;
         }
+        //[HttpPost("SaveUpdate")]
+        //public async Task<ActionResult<Response>> PostTmGrpschedule(int schno, TmGrpschedule tmGrpschedule)
+        //{
+        //    if (schno != tmGrpschedule.SchNo)
+        //    {
+        //        _context.TmGrpschedule.Add(tmGrpschedule);
+        //        try
+        //        {
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateException)
+        //        {
+        //            if (TmGrpscheduleExists(tmGrpschedule.SchNo))
+        //            {
+        //                //return Conflict();
+        //                return new Response { Status = "Conflict", Message = "Record Already Exist" };
+        //            }
+        //        }
+        //        return new Response { Status = "SUCCESSFULL", Message = "SAVED SUCCESSFULLY" };
+        //        // return CreatedAtAction("GetTmCostcenter", new { id = tmCostcenter.CcCode }, tmCostcenter);
+        //    }
+        //    else if (schno == tmGrpschedule.SchNo)
+        //    {
+        //        _context.Entry(tmGrpschedule).State = EntityState.Modified;
+
+        //        try
+        //        {
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            if (!TmGrpscheduleExists(schno))
+        //            {
+        //                //return NotFound();
+        //                return new Response { Status = "NotFound", Message = "Record Not Found" };
+        //            }
+        //            /* else
+        //             {
+        //                 throw;
+        //             }*/
+        //        }
+
+        //        // return NoContent();
+        //        return new Response { Status = "Updated", Message = "Record Updated Sucessfull" };
+        //    }
+        //    return null;
+        //}
         // PUT: api/TmGrpschedules/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.

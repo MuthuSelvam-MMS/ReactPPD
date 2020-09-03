@@ -877,8 +877,7 @@ namespace ReactPPD.Controllers
         public async Task<ActionResult<Response>> PostTmItem(ItemView tmItemView)
         {
             
-            var tmItems = await _context.TmItem.FindAsync(tmItemView.ItemCode);
-            // var tmMeats = await _context.TmMeats.Where(x => x.MeatsCode == tmItemView.MeatsCode).FirstOrDefaultAsync();
+            var tmItems = await _context.TmItem.FindAsync(tmItemView.ItemCode);           
             var tmMeats = await _context.TmMeats.FindAsync(tmItemView.MeatsCode);
             TmItem newtmItem = new TmItem();
             TmMeats newtmMeats = new TmMeats();
@@ -1061,7 +1060,7 @@ namespace ReactPPD.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TmItemExists(tmItemView.ItemCode) || !TmMeatExists(tmItemView.MeatsCode))
+                    if (!TmItemExists(tmItems.ItemCode) || !TmMeatExists(tmMeats.MeatsCode))
                     {
                         return new Response { Status = "NotFound", Message = "Record Not Found" };
                     }
