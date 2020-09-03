@@ -876,12 +876,14 @@ namespace ReactPPD.Controllers
         [HttpPost("SaveUpdate")]
         public async Task<ActionResult<Response>> PostTmItem(ItemView tmItemView)
         {
+            
+            var tmItems = await _context.TmItem.FindAsync(tmItemView.ItemCode);
+            // var tmMeats = await _context.TmMeats.Where(x => x.MeatsCode == tmItemView.MeatsCode).FirstOrDefaultAsync();
+            var tmMeats = await _context.TmMeats.FindAsync(tmItemView.MeatsCode);
             TmItem newtmItem = new TmItem();
             TmMeats newtmMeats = new TmMeats();
-            var tmItems = await _context.TmItem.FindAsync(tmItemView.ItemCode);
-           var tmMeats = await _context.TmMeats.Where(x => x.MeatsCode == tmItemView.MeatsCode).FirstOrDefaultAsync();
-           
-                if (tmItems == null)
+
+            if (tmItems == null)
                 {
                     if (tmItemView.Itemtype.StartsWith("CH") || tmItemView.Itemtype.StartsWith("FC") && tmMeats == null)
                     {
@@ -936,8 +938,8 @@ namespace ReactPPD.Controllers
                         newtmMeats.SectionName = tmItemView.SectionName;
                         _context.TmItem.Add(newtmItem);
                         _context.TmMeats.Add(newtmMeats);
-                     
-                    }
+                      
+                }
                     else
                       { 
                         newtmItem.ItemCode = tmItemView.ItemCode;
