@@ -11,21 +11,18 @@ namespace ReactPPD.Model
         [Required]
         [StringLength(12)]
         public string DocNo { get; set; }
-        [Column(TypeName = "date")]
-        public DateTime TransDate { get; set; }
+        public DateTimeOffset TransDate { get; set; }
         [Required]
         [StringLength(2)]
         public string PricingType { get; set; }
-        [Column(TypeName = "date")]
-        public DateTime EffectFrom { get; set; }
-        [Column(TypeName = "date")]
-        public DateTime EffectTo { get; set; }
-        [Key]
-        [StringLength(10)]
-        public string BranchCode { get; set; }
+        public DateTimeOffset EffectFrom { get; set; }
+        public DateTimeOffset EffectTo { get; set; }
         [Key]
         [StringLength(10)]
         public string ItemCode { get; set; }
+        [Key]
+        [StringLength(10)]
+        public string BranchCode { get; set; }
         [Column(TypeName = "decimal(18,4)")]
         public decimal? Rate { get; set; }
         [Column(TypeName = "decimal(18,4)")]
@@ -65,5 +62,9 @@ namespace ReactPPD.Model
         public string RegCode { get; set; }
         [StringLength(10)]
         public string RegName { get; set; }
+
+        [ForeignKey("ItemCode,BranchCode")]
+        [InverseProperty("TmPricelist")]
+        public virtual TmItembrmap TmItembrmap { get; set; }
     }
 }

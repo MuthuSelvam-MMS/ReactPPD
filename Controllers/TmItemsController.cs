@@ -936,7 +936,7 @@ namespace ReactPPD.Controllers
                         newtmMeats.SectionName = tmItemView.SectionName;
                         _context.TmItem.Add(newtmItem);
                         _context.TmMeats.Add(newtmMeats);
-                     //   await _context.SaveChangesAsync();
+                     
                     }
                     else
                       { 
@@ -1032,8 +1032,7 @@ namespace ReactPPD.Controllers
 
                 }
                 else
-                {
-                   // newtmItem.ItemCode = tmItemView.ItemCode;
+                {                  
                     tmItems.ItemName = tmItemView.ItemName;
                     tmItems.ItemSpec = tmItemView.ItemSpec;
                     tmItems.PartNo = tmItemView.PartNo;

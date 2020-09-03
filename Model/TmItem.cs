@@ -15,6 +15,7 @@ namespace ReactPPD.Model
             InversePmxCode1Navigation = new HashSet<TmItem>();
             InversePmxCode2Navigation = new HashSet<TmItem>();
             InversePrtItemNavigation = new HashSet<TmItem>();
+            TmItembrmap = new HashSet<TmItembrmap>();
             TmItemnature = new HashSet<TmItemnature>();
             TmVendor = new HashSet<TmVendor>();
         }
@@ -156,6 +157,8 @@ namespace ReactPPD.Model
         public virtual ICollection<TmItem> InversePmxCode2Navigation { get; set; }
         [InverseProperty(nameof(TmItem.PrtItemNavigation))]
         public virtual ICollection<TmItem> InversePrtItemNavigation { get; set; }
+        [InverseProperty("ItemCodeNavigation")]
+        public virtual ICollection<TmItembrmap> TmItembrmap { get; set; }
         [InverseProperty("ItemCodeNavigation")]
         public virtual ICollection<TmItemnature> TmItemnature { get; set; }
         [InverseProperty("ItemCodeNavigation")]

@@ -33,7 +33,7 @@ namespace ReactPPD.Controllers
 
         // GET: api/TmGrpschedules/5
         [HttpPost("GrpSchedule")]
-        public async Task<ActionResult<IEnumerable<TmGrpschedule>>> GetTmGrpschedule(string schname)
+        public async Task<ActionResult<List<GrpSchedule>>> GetTmGrpschedule(string schname)
         {
             try
             {
@@ -41,7 +41,7 @@ namespace ReactPPD.Controllers
                 {
                     var tmGrpschedule = await _context.TmGrpschedule
                                        .OrderBy(i => i.SchName)
-                                       .Select(i => new TmGrpschedule { SchNo = i.SchNo, SchName = i.SchName })
+                                       .Select(i => new GrpSchedule { SchNo = i.SchNo, SchName = i.SchName })
                                        .ToListAsync();
 
 
@@ -62,7 +62,7 @@ namespace ReactPPD.Controllers
                     var tmGrpschedule = await _context.TmGrpschedule
                                         .Where(i => i.SchName.StartsWith(schname))
                                         .OrderBy(i => i.SchName)
-                                        .Select(i => new TmGrpschedule { SchNo = i.SchNo, SchName = i.SchName })
+                                        .Select(i => new GrpSchedule { SchNo = i.SchNo, SchName = i.SchName })
                                         .ToListAsync();
 
 
@@ -88,7 +88,7 @@ namespace ReactPPD.Controllers
         }
 
         [HttpPost("ParentSchedule")]
-        public async Task<ActionResult<IEnumerable<TmGrpschedule>>> GetTmGrpParentschedule(string schname)
+        public async Task<ActionResult<List<GrpSchedule>>> GetTmGrpParentschedule(string schname)
         {
             try
             {
@@ -97,7 +97,7 @@ namespace ReactPPD.Controllers
                     var tmGrpschedule = await _context.TmGrpschedule
                                        .Where(i =>i.IsActive == "A" )
                                        .OrderBy(i => i.SchName)
-                                       .Select(i => new TmGrpschedule { SchNo = i.SchNo, SchName = i.SchName })
+                                       .Select(i => new GrpSchedule{ SchNo = i.SchNo, SchName = i.SchName })
                                        .ToListAsync();
 
 
@@ -119,7 +119,7 @@ namespace ReactPPD.Controllers
                                         .Where(i => i.IsActive == "A")
                                         .Where(i => i.SchName.StartsWith(schname))
                                         .OrderBy(i => i.SchName)
-                                        .Select(i => new TmGrpschedule { SchNo = i.SchNo, SchName = i.SchName })
+                                        .Select(i => new GrpSchedule { SchNo = i.SchNo, SchName = i.SchName })
                                         .ToListAsync();
 
 
@@ -144,13 +144,20 @@ namespace ReactPPD.Controllers
             }
         }
         [HttpPost("ViewGrpSchedule")]
-        public async Task<ActionResult<IEnumerable<TmGrpschedule>>> ViewTmGrpschedule(int schno)
+        public async Task<ActionResult<List<GrpSchedule>>> ViewTmGrpschedule(int schno)
         {
             try
             {
                 var tmGrpschedule = await _context.TmGrpschedule
-                            .Where(i => i.SchNo == schno)
-                            .Select(i => i).ToListAsync();
+                                    .Join(_context.TmGrpschedule ,A =>A.PrtSchNo,B =>B.SchNo,(A,B) => new { TmGrpschedule = A,B})
+                                    .Where(i => i.TmGrpschedule.SchNo == schno)
+                                    .Select(i => new GrpSchedule 
+                                    {SchNo = i.TmGrpschedule.SchNo,
+                                     SchName = i.TmGrpschedule.SchName,
+                                    PrtSchNo = i.TmGrpschedule.PrtSchNo,
+                                    PrtName = i.B.SchName,
+                                    IsActive = i.TmGrpschedule.IsActive
+                                    }).ToListAsync();
                 if (tmGrpschedule.Count == 0)
                 {
                     var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
@@ -192,10 +199,6 @@ namespace ReactPPD.Controllers
             }
             else if (schno == tmGrpschedule.SchNo)
             {
-                /* {
-                     return BadRequest();
-                 }*/
-
                 _context.Entry(tmGrpschedule).State = EntityState.Modified;
 
                 try

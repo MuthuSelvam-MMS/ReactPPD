@@ -33,7 +33,7 @@ namespace ReactPPD.Controllers
 
         // GET: api/TmItemcategories/5
         [HttpPost("CategoryCode")]
-        public async Task<ActionResult<IEnumerable<TmItemcategory>>> GetTmItemcategory(string CatgyCode)
+        public async Task<ActionResult<List<ItemCategory>>> GetTmItemcategory(string CatgyCode)
         {
             try
             {
@@ -42,7 +42,7 @@ namespace ReactPPD.Controllers
                     var tmItemcategory = await _context.TmItemcategory
                                         .Where(i => i.IsActive == "A")
                                         .OrderBy(i => i.CatgyName)
-                                        .Select(i => new TmItemcategory { CatgyCode = i.CatgyCode, CatgyName = i.CatgyName })
+                                        .Select(i => new ItemCategory { CatgyCode = i.CatgyCode, CatgyName = i.CatgyName })
                                         .ToListAsync();
 
 
@@ -64,7 +64,7 @@ namespace ReactPPD.Controllers
                                 .Where(i => i.CatgyCode.StartsWith(CatgyCode))
                                 .Where(i => i.IsActive == "A")
                                 .OrderBy(i => i.CatgyName)
-                                .Select(i => new TmItemcategory { CatgyCode = i.CatgyCode, CatgyName = i.CatgyName })
+                                .Select(i => new ItemCategory { CatgyCode = i.CatgyCode, CatgyName = i.CatgyName })
                                 .ToListAsync();
 
 
@@ -89,7 +89,7 @@ namespace ReactPPD.Controllers
         }
 
         [HttpPost("ParentCode")]
-        public async Task<ActionResult<IEnumerable<TmItemcategory>>> GetTmItemcategoryParentCode(string ParentCode)
+        public async Task<ActionResult<List<ItemCategory>>> GetTmItemcategoryParentCode(string ParentCode)
         {
             try
             {
@@ -98,7 +98,7 @@ namespace ReactPPD.Controllers
                     var tmItemcategory = await _context.TmItemcategory
                                         .Where(i => i.IsActive == "A")
                                         .OrderBy(i => i.CatgyName)
-                                        .Select(i => new TmItemcategory { PrtCode = i.PrtCode, CatgyName = i.CatgyName })
+                                        .Select(i => new ItemCategory { PrtCode = i.PrtCode, CatgyName = i.CatgyName })
                                         .ToListAsync();
 
 
@@ -121,7 +121,7 @@ namespace ReactPPD.Controllers
                                         .Where(i =>i.PrtCode.StartsWith(ParentCode))
                                         .Where(i => i.IsActive == "A")
                                         .OrderBy(i => i.CatgyName)
-                                        .Select(i => new TmItemcategory { PrtCode = i.PrtCode, CatgyName = i.CatgyName })
+                                        .Select(i => new ItemCategory { PrtCode = i.PrtCode, CatgyName = i.CatgyName })
                                         .ToListAsync();
 
 
@@ -146,7 +146,7 @@ namespace ReactPPD.Controllers
         }
 
         [HttpPost("GrantParentCode")]
-        public async Task<ActionResult<IEnumerable<TmItemcategory>>> GetTmItemcategoryGrantParentCode(string GrantParentCode)
+        public async Task<ActionResult<List<ItemCategory>>> GetTmItemcategoryGrantParentCode(string GrantParentCode)
         {
             try
             {
@@ -155,7 +155,7 @@ namespace ReactPPD.Controllers
                     var tmItemcategory = await _context.TmItemcategory
                                         .Where(i => i.IsActive == "A")
                                         .OrderBy(i => i.CatgyName)
-                                        .Select(i => new TmItemcategory { GprtCode = i.GprtCode, CatgyName = i.CatgyName })
+                                        .Select(i => new ItemCategory { GprtCode = i.GprtCode, CatgyName = i.CatgyName })
                                         .ToListAsync();
 
 
@@ -178,7 +178,7 @@ namespace ReactPPD.Controllers
                                         .Where(i => i.IsActive == "A")
                                         .Where(i => i.GprtCode.StartsWith(GrantParentCode.ToUpper()))
                                         .OrderBy(i => i.CatgyName)
-                                        .Select(i => new TmItemcategory { GprtCode = i.GprtCode, CatgyName = i.CatgyName })
+                                        .Select(i => new ItemCategory { GprtCode = i.GprtCode, CatgyName = i.CatgyName })
                                         .ToListAsync();
 
 

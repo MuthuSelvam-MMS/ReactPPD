@@ -9,5 +9,7 @@ namespace ReactPPD.VM
     {
         public string CatgyCode { get; set; }
         public string CatgyName { get; set; }
+        public string PrtCode { get; set; }
+        public string GprtCode { get; set; }
     }
 }

@@ -6,7 +6,6 @@ namespace ReactPPD.Model
 {
     public partial class reactppdContext : DbContext
     {
-       
         public reactppdContext(DbContextOptions<reactppdContext> options)
             : base(options)
         {
@@ -33,6 +32,7 @@ namespace ReactPPD.Model
         public virtual DbSet<TmGodown> TmGodown { get; set; }
         public virtual DbSet<TmGrpschedule> TmGrpschedule { get; set; }
         public virtual DbSet<TmItem> TmItem { get; set; }
+        public virtual DbSet<TmItembrmap> TmItembrmap { get; set; }
         public virtual DbSet<TmItemcategory> TmItemcategory { get; set; }
         public virtual DbSet<TmItemnature> TmItemnature { get; set; }
         public virtual DbSet<TmItemtype> TmItemtype { get; set; }
@@ -57,7 +57,8 @@ namespace ReactPPD.Model
         public virtual DbSet<TmVendor> TmVendor { get; set; }
         public virtual DbSet<TmZone> TmZone { get; set; }
         public virtual DbSet<TtShedready> TtShedready { get; set; }
-             
+
+       
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -1921,6 +1922,42 @@ namespace ReactPPD.Model
                     .HasConstraintName("FK_ItemItemUomStk");
             });
 
+            modelBuilder.Entity<TmItembrmap>(entity =>
+            {
+                entity.HasKey(e => new { e.ItemCode, e.BranchCode })
+                    .HasName("PRIMARY");
+
+                entity.Property(e => e.ItemCode).IsUnicode(false);
+
+                entity.Property(e => e.BranchCode).IsUnicode(false);
+
+                entity.Property(e => e.IsActive)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'A'");
+
+                entity.Property(e => e.IsTaxable)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'N'");
+
+                entity.Property(e => e.LastIssuseDate).HasDefaultValueSql("'2001-01-01'");
+
+                entity.Property(e => e.LastPurRate).HasDefaultValueSql("'0.00'");
+
+                entity.Property(e => e.LastSupplier)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.LockDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                entity.Property(e => e.TaxRate).HasDefaultValueSql("'0.00'");
+
+                entity.HasOne(d => d.ItemCodeNavigation)
+                    .WithMany(p => p.TmItembrmap)
+                    .HasForeignKey(d => d.ItemCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ItemBranchIc");
+            });
+
             modelBuilder.Entity<TmItemcategory>(entity =>
             {
                 entity.HasKey(e => e.CatgyCode)
@@ -2685,12 +2722,15 @@ namespace ReactPPD.Model
                 entity.HasKey(e => new { e.DocIntNo, e.BranchCode, e.ItemCode, e.PartyCode, e.Age, e.ItemNature })
                     .HasName("PRIMARY");
 
+                entity.HasIndex(e => new { e.ItemCode, e.BranchCode })
+                    .HasName("FK_PricelistBrItem");
+
                 entity.HasIndex(e => new { e.BranchCode, e.DocNo, e.ItemCode, e.PartyCode, e.Age, e.ItemNature })
-                    .HasName("UK_PriceListDocIntNo")
+                    .HasName("UK_PricelistDocIntNo")
                     .IsUnique();
 
                 entity.HasIndex(e => new { e.BranchCode, e.DocNo, e.PricingType, e.ItemCode, e.PartyCode, e.Age, e.ItemNature })
-                    .HasName("UK_PriceList")
+                    .HasName("UK_Pricelist")
                     .IsUnique();
 
                 entity.Property(e => e.BranchCode).IsUnicode(false);
@@ -2719,6 +2759,10 @@ namespace ReactPPD.Model
 
                 entity.Property(e => e.DocNo).IsUnicode(false);
 
+                entity.Property(e => e.EffectFrom).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                entity.Property(e => e.EffectTo).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
                 entity.Property(e => e.IsActive)
                     .IsUnicode(false)
                     .HasDefaultValueSql("'A'");
@@ -2745,9 +2789,17 @@ namespace ReactPPD.Model
                     .IsUnicode(false)
                     .HasDefaultValueSql("'NONE'");
 
+                entity.Property(e => e.TransDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
                 entity.Property(e => e.ZoneCode)
                     .IsUnicode(false)
                     .HasDefaultValueSql("'NONE'");
+
+                entity.HasOne(d => d.TmItembrmap)
+                    .WithMany(p => p.TmPricelist)
+                    .HasForeignKey(d => new { d.ItemCode, d.BranchCode })
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_PricelistBrItem");
             });
 
             modelBuilder.Entity<TmProdnature>(entity =>
