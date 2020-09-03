@@ -6,6 +6,7 @@ namespace ReactPPD.Model
 {
     public partial class reactppdContext : DbContext
     {
+        
         public reactppdContext(DbContextOptions<reactppdContext> options)
             : base(options)
         {
@@ -56,9 +57,7 @@ namespace ReactPPD.Model
         public virtual DbSet<TmUserright> TmUserright { get; set; }
         public virtual DbSet<TmVendor> TmVendor { get; set; }
         public virtual DbSet<TmZone> TmZone { get; set; }
-        public virtual DbSet<TtShedready> TtShedready { get; set; }
-
-       
+        public virtual DbSet<TtShedready> TtShedready { get; set; }        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -2344,15 +2343,16 @@ namespace ReactPPD.Model
 
             modelBuilder.Entity<TmMeats>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.MeatsCode)
+                    .HasName("PRIMARY");
+
+                entity.Property(e => e.MeatsCode).IsUnicode(false);
 
                 entity.Property(e => e.BranchCode).IsUnicode(false);
 
                 entity.Property(e => e.GradeSection).IsUnicode(false);
 
                 entity.Property(e => e.IsActive).IsUnicode(false);
-
-                entity.Property(e => e.MeatsCode).IsUnicode(false);
 
                 entity.Property(e => e.MeatsName).IsUnicode(false);
 

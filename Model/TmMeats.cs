@@ -8,7 +8,7 @@ namespace ReactPPD.Model
     [Table("tm_meats")]
     public partial class TmMeats
     {
-        [Required]
+        [Key]
         [StringLength(10)]
         public string MeatsCode { get; set; }
         [Required]

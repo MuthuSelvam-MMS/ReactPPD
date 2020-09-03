@@ -154,9 +154,9 @@ namespace ReactPPD.Controllers
                                     .Select(i => new GrpSchedule 
                                     {SchNo = i.TmGrpschedule.SchNo,
                                      SchName = i.TmGrpschedule.SchName,
-                                    PrtSchNo = i.TmGrpschedule.PrtSchNo,
-                                    PrtName = i.B.SchName,
-                                    IsActive = i.TmGrpschedule.IsActive
+                                     PrtSchNo = i.TmGrpschedule.PrtSchNo,
+                                     PrtName = i.B.SchName,
+                                     IsActive = i.TmGrpschedule.IsActive
                                     }).ToListAsync();
                 if (tmGrpschedule.Count == 0)
                 {

@@ -879,11 +879,11 @@ namespace ReactPPD.Controllers
             TmItem newtmItem = new TmItem();
             TmMeats newtmMeats = new TmMeats();
             var tmItems = await _context.TmItem.FindAsync(tmItemView.ItemCode);
-            var tmMeats = await _context.TmMeats.FindAsync(tmItemView.MeatsCode);
+           var tmMeats = await _context.TmMeats.Where(x => x.MeatsCode == tmItemView.MeatsCode).FirstOrDefaultAsync();
            
                 if (tmItems == null)
                 {
-                    if (tmItemView.Itemtype.StartsWith("CH") || tmItemView.Itemtype.StartsWith("FC"))
+                    if (tmItemView.Itemtype.StartsWith("CH") || tmItemView.Itemtype.StartsWith("FC") && tmMeats == null)
                     {
                         
                         newtmItem.ItemCode = tmItemView.ItemCode;
@@ -1002,7 +1002,7 @@ namespace ReactPPD.Controllers
 
             if (tmItems != null)
             {
-                if (tmItems.ItemType.StartsWith("CH") || tmItems.ItemType.StartsWith("FC"))
+                if (tmItems.ItemType.StartsWith("CH") || tmItems.ItemType.StartsWith("FC") && tmMeats != null)
                 {
                     tmItems.ItemName = tmItemView.ItemName;
                     tmItems.ItemSpec = tmItemView.ItemSpec;
