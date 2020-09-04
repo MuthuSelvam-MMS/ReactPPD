@@ -265,7 +265,7 @@ namespace ReactPPD.Controllers
                                    .Join(_context.TmCostcenter,A => A.PrtCcCode, B => B.CcCode,(A,B) => new { TmCostcenter = A ,B})
                                    .Join(_context.TmCostcenter,A => A.TmCostcenter.GprtCcCode ,C => C.CcCode,(A,C) => new {TmCostcenter = A,C })
                                    .Join(_context.TmGcm, A => A.TmCostcenter.TmCostcenter.CcType, D => D.GcmType,(A,D) => new {TmCostcenter =A,TmGcm =D })                                  
-                                   .Where(i => i.TmCostcenter.TmCostcenter.TmCostcenter.CcCode == CcCode)
+                                   .Where(i => i.TmCostcenter.TmCostcenter.TmCostcenter.CcCode == CcCode && i.TmGcm.GcmType.StartsWith("CTM"))
                                   .Select(i => new CostCenter
                                   { 
                                     CcCode = i.TmCostcenter.TmCostcenter.TmCostcenter.CcCode,
