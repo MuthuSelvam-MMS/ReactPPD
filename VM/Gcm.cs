@@ -9,5 +9,6 @@ namespace ReactPPD.VM
     {
         public string GcmCode { get; set; }
         public string GcmDesc { get; set; }
+        public string GcmType { get; set; }
     }
 }

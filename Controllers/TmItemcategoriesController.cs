@@ -263,6 +263,10 @@ namespace ReactPPD.Controllers
 
                         return new Response { Status = "Conflict", Message = "Record Already Exist" };
                     }
+                    else
+                    {
+                        return new Response { Status = "Error", Message = "Missing Some Input Feilds" };
+                    }
                 }
                 return new Response { Status = "SUCCESSFULL", Message = "SAVED SUCCESSFULLY" };
 

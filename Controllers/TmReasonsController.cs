@@ -387,6 +387,10 @@ namespace ReactPPD.Controllers
                         
                         return new Response { Status = "Conflict", Message = "Record Already Exist" };
                     }
+                    else
+                    {
+                        return new Response { Status = "Error", Message = "Missing Some Input Feilds" };
+                    }
                 }
                 return new Response { Status = "SUCCESSFULL", Message = "SAVED SUCCESSFULLY" };
 
@@ -407,7 +411,11 @@ namespace ReactPPD.Controllers
                     {
                       return new Response { Status = "NotFound", Message = "Record Not Found" };
                     }
-                   
+                    else
+                    {
+                        return new Response { Status = "Not Allowed", Message = "Update Not Allowed" };
+                    }
+
                 }
 
                 return new Response { Status = "Updated", Message = "Record Updated Sucessfull" };

@@ -10,5 +10,7 @@ namespace ReactPPD.VM
         public string PlaceCode { get; set; }
         public string PinCode { get; set; }
         public string PlaceName { get; set; }
+       
+       
     }
 }
