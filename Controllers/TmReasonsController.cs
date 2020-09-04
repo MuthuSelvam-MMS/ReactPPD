@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web.Http.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ using ReactPPD.VM;
 
 namespace ReactPPD.Controllers
 {
+    [EnableCors("*", "*", "*")]
     [Route("api/[controller]")]
     [ApiController]
     public class TmReasonsController : ControllerBase
@@ -30,8 +32,7 @@ namespace ReactPPD.Controllers
             return await _context.TmReason.ToListAsync();
         }
 
-        // GET: api/TmReasons/5
-        // GET: api/TmGrpschedules/5
+        // GET: api/TmReasons/5       
         [HttpPost("DocType")]
         public async Task<ActionResult<List<Doctypes>>> GetTmDoctypes(string docname)
         {
@@ -318,12 +319,63 @@ namespace ReactPPD.Controllers
             }
         }
 
-        [HttpPost("SaveUpdate")]
-        public async Task<ActionResult<Response>> PostTmReason(string reasoncode, TmReason tmReason)
+        [HttpPost("ViewReason")]
+        public async Task<ActionResult<List<Reason>>> ViewReason(string ReasonCode)
         {
-            if (reasoncode != tmReason.ReasonCode)
+            try
             {
-                _context.TmReason.Add(tmReason);
+                var tmReason = await _context.TmReason
+                                    .Join(_context.TmBranch, A => A.BranchCode, B => B.BranchCode, (A, B) => new {TmReason = A,TmBranch = B })
+                                    .Join(_context.TmDoctypes, A =>A.TmReason.DocType ,C => C.DocType,(A,C) => new {TmReason = A ,TmDoctypes = C })
+                                    .Join(_context.TmAcgroup ,A => A.TmReason.TmReason.GrpCode,D => D.GrpCode,(A,D) => new {TmReason = A,TmAcgroup = D })
+                                    .Join(_context.TmAccounts, A => A.TmReason.TmReason.TmReason.AccountCode, E => E.AccountCode,(A,E) => new {TmReason = A,TmAccounts = E })
+                                    .Where(i => i.TmReason.TmReason.TmReason.TmReason.ReasonCode == ReasonCode)
+                                    .Select(i => new Reason
+                                    {
+                                        BranchCode = i.TmReason.TmReason.TmReason.TmReason.BranchCode,
+                                        BranchName = i.TmReason.TmReason.TmReason.TmBranch.BranchName,
+                                        ReasonCode = i.TmReason.TmReason.TmReason.TmReason.ReasonCode,
+                                        ReasonName = i.TmReason.TmReason.TmReason.TmReason.ReasonName,
+                                        DocType = i.TmReason.TmReason.TmReason.TmReason.DocType,
+                                        DocName = i.TmReason.TmReason.TmDoctypes.DocName,
+                                        GrpCode = i.TmReason.TmReason.TmReason.TmReason.GrpCode,
+                                        GrpName = i.TmReason.TmAcgroup.GrpName,
+                                        AccountCode = i.TmReason.TmReason.TmReason.TmReason.AccountCode,
+                                        AccountName = i.TmAccounts.AccountName,
+                                        IsActive = i.TmReason.TmReason.TmReason.TmReason.IsActive                                        
+                                    }).ToListAsync();
+                if (tmReason.Count == 0)
+                {
+                    var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                    {
+                        Content = new StringContent(string.Format("No Reason with ID = {0}", ReasonCode)),
+                        ReasonPhrase = "Reason Code  Not Found"
+                    };
+                    throw new System.Web.Http.HttpResponseException(resp);
+                }
+                return tmReason;
+
+            }
+            catch (System.Web.Http.HttpResponseException ex)
+            {
+                return BadRequest(new { Message = ex.Response.ReasonPhrase });
+            }
+        }
+
+        [HttpPost("SaveUpdate")]
+        public async Task<ActionResult<Response>> PostTmReason(Reason tmReason)
+        {
+            var reason = _context.TmReason.Where(x => x.ReasonCode == tmReason.ReasonCode).FirstOrDefault();
+            TmReason newtmreason = new TmReason();
+            if(reason == null)
+            {
+                newtmreason.BranchCode = tmReason.BranchCode;
+                newtmreason.ReasonCode = tmReason.ReasonCode;
+                newtmreason.ReasonName = tmReason.ReasonName;
+                newtmreason.DocType = tmReason.DocType;
+                newtmreason.GrpCode = tmReason.GrpCode;
+                newtmreason.AccountCode = tmReason.AccountCode;
+                _context.TmReason.Add(newtmreason);
                 try
                 {
                     await _context.SaveChangesAsync();
@@ -332,96 +384,87 @@ namespace ReactPPD.Controllers
                 {
                     if (TmReasonExists(tmReason.ReasonCode))
                     {
-                        //return Conflict();
+                        
                         return new Response { Status = "Conflict", Message = "Record Already Exist" };
                     }
                 }
                 return new Response { Status = "SUCCESSFULL", Message = "SAVED SUCCESSFULLY" };
-                // return CreatedAtAction("GetTmCostcenter", new { id = tmCostcenter.CcCode }, tmCostcenter);
+
             }
-            else if (reasoncode == tmReason.ReasonCode)
+            if(reason != null)
             {
-                /* {
-                     return BadRequest();
-                 }*/
-
-                _context.Entry(tmReason).State = EntityState.Modified;
-
+                reason.ReasonName = tmReason.ReasonName;
+                reason.GrpCode = tmReason.GrpCode;
+                reason.AccountCode = tmReason.AccountCode;
+                reason.IsActive = tmReason.IsActive;
                 try
                 {
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TmReasonExists(reasoncode))
+                    if (!TmReasonExists(tmReason.ReasonCode))
                     {
-                        //return NotFound();
-                        return new Response { Status = "NotFound", Message = "Record Not Found" };
+                      return new Response { Status = "NotFound", Message = "Record Not Found" };
                     }
-                    /* else
-                     {
-                         throw;
-                     }*/
+                   
                 }
 
-                // return NoContent();
                 return new Response { Status = "Updated", Message = "Record Updated Sucessfull" };
             }
             return null;
         }
+        //[HttpPost("SaveUpdate")]
+        //public async Task<ActionResult<Response>> PostTmReason(string reasoncode, TmReason tmReason)
+        //{
+        //    if (reasoncode != tmReason.ReasonCode)
+        //    {
+        //        _context.TmReason.Add(tmReason);
+        //        try
+        //        {
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateException)
+        //        {
+        //            if (TmReasonExists(tmReason.ReasonCode))
+        //            {
+        //                //return Conflict();
+        //                return new Response { Status = "Conflict", Message = "Record Already Exist" };
+        //            }
+        //        }
+        //        return new Response { Status = "SUCCESSFULL", Message = "SAVED SUCCESSFULLY" };
+        //        // return CreatedAtAction("GetTmCostcenter", new { id = tmCostcenter.CcCode }, tmCostcenter);
+        //    }
+        //    else if (reasoncode == tmReason.ReasonCode)
+        //    {
+        //        /* {
+        //             return BadRequest();
+        //         }*/
 
-        // PUT: api/TmReasons/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTmReason(string id, TmReason tmReason)
-        {
-            if (id != tmReason.BranchCode)
-            {
-                return BadRequest();
-            }
+        //        _context.Entry(tmReason).State = EntityState.Modified;
 
-            _context.Entry(tmReason).State = EntityState.Modified;
+        //        try
+        //        {
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            if (!TmReasonExists(reasoncode))
+        //            {
+        //                //return NotFound();
+        //                return new Response { Status = "NotFound", Message = "Record Not Found" };
+        //            }
+        //            /* else
+        //             {
+        //                 throw;
+        //             }*/
+        //        }
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TmReasonExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/TmReasons
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-      
-        // DELETE: api/TmReasons/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<TmReason>> DeleteTmReason(string id)
-        {
-            var tmReason = await _context.TmReason.FindAsync(id);
-            if (tmReason == null)
-            {
-                return NotFound();
-            }
-
-            _context.TmReason.Remove(tmReason);
-            await _context.SaveChangesAsync();
-
-            return tmReason;
-        }
-
+        //        // return NoContent();
+        //        return new Response { Status = "Updated", Message = "Record Updated Sucessfull" };
+        //    }
+        //    return null;
+        //}     
         private bool TmReasonExists(string id)
         {
             return _context.TmReason.Any(e => e.BranchCode == id);

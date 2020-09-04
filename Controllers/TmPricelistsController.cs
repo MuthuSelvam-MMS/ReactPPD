@@ -9,9 +9,11 @@ using ReactPPD.Model;
 using ReactPPD.VM;
 using System.Net.Http;
 using System.Net;
+using System.Web.Http.Cors;
 
 namespace ReactPPD.Controllers
 {
+    [EnableCors("*", "*", "*")]
     [Route("api/[controller]")]
     [ApiController]
     public class TmPricelistsController : ControllerBase

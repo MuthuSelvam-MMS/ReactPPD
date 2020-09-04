@@ -35,7 +35,7 @@ namespace ReactPPD.Controllers
         // GET: api/TmCostcenters/5        
       
         [HttpPost("CostCenterName")]
-        public async Task<ActionResult<IEnumerable<TmCostcenter>>> GetTmCostcenter(string CcName)
+        public async Task<ActionResult<List<CostCenter>>> GetTmCostcenter(string CcName)
         {
             try
             {
@@ -43,7 +43,7 @@ namespace ReactPPD.Controllers
                 {
                     var tmCostcenter = await _context.TmCostcenter
                                         .OrderBy(i => i.CcName)
-                                        .Select(i => new TmCostcenter { CcCode = i.CcCode, CcName = i.CcName })
+                                        .Select(i => new CostCenter { CcCode = i.CcCode, CcName = i.CcName })
                                         .ToListAsync();
 
 
@@ -64,7 +64,7 @@ namespace ReactPPD.Controllers
                     var tmCostcenter = await _context.TmCostcenter
                                 .Where(i => i.CcName.StartsWith(CcName.ToUpper()))
                                 .OrderBy(i => i.CcName)
-                                .Select(i => new TmCostcenter { CcCode = i.CcCode, CcName = i.CcName })
+                                .Select(i => new CostCenter { CcCode = i.CcCode, CcName = i.CcName })
                                 .ToListAsync();
 
 
@@ -89,7 +89,7 @@ namespace ReactPPD.Controllers
         }
 
         [HttpPost("ParentName")]
-        public async Task<ActionResult<IEnumerable<TmCostcenter>>> GetTmCostcenterParent(string parentName)
+        public async Task<ActionResult<List<CostCenter>>> GetTmCostcenterParent(string parentName)
         {
             try
             {
@@ -98,7 +98,7 @@ namespace ReactPPD.Controllers
                     var tmCostcenter = await _context.TmCostcenter
                                        .Where(i => i.IsActive == "A")
                                        .OrderBy(i => i.CcName)
-                                       .Select(i => new TmCostcenter { PrtCcCode = i.PrtCcCode, CcName = i.CcName })
+                                       .Select(i => new CostCenter { PrtCcCode = i.PrtCcCode, CcName = i.CcName })
                                        .ToListAsync();
 
 
@@ -121,7 +121,7 @@ namespace ReactPPD.Controllers
                                        .Where(i => i.CcName.StartsWith(parentName.ToUpper()))
                                        .Where(i => i.IsActive == "A")
                                        .OrderBy(i => i.CcName)
-                                       .Select(i => new TmCostcenter { PrtCcCode = i.PrtCcCode, CcName = i.CcName })
+                                       .Select(i => new CostCenter { PrtCcCode = i.PrtCcCode, CcName = i.CcName })
                                        .ToListAsync();
 
 
@@ -146,7 +146,7 @@ namespace ReactPPD.Controllers
         }
 
         [HttpPost("GrantParentName")]
-        public async Task<ActionResult<IEnumerable<TmCostcenter>>> GetTmCostcenterGrantParent(string GrantparentName)
+        public async Task<ActionResult<List<CostCenter>>> GetTmCostcenterGrantParent(string GrantparentName)
         {
             try
             {
@@ -155,7 +155,7 @@ namespace ReactPPD.Controllers
                     var tmCostcenter = await _context.TmCostcenter
                                        .Where(i => i.IsActive == "A")
                                        .OrderBy(i => i.CcName)
-                                       .Select(i => new TmCostcenter { GprtCcCode = i.GprtCcCode, CcName = i.CcName })
+                                       .Select(i => new CostCenter { GprtCcCode = i.GprtCcCode, CcName = i.CcName })
                                        .ToListAsync();
 
 
@@ -178,7 +178,7 @@ namespace ReactPPD.Controllers
                                        .Where(i => i.CcName.StartsWith(GrantparentName.ToUpper()))
                                        .Where(i => i.IsActive == "A")
                                        .OrderBy(i => i.CcName)
-                                       .Select(i => new TmCostcenter { GprtCcCode = i.GprtCcCode, CcName = i.CcName })
+                                       .Select(i => new CostCenter { GprtCcCode = i.GprtCcCode, CcName = i.CcName })
                                        .ToListAsync();
 
 
@@ -203,7 +203,7 @@ namespace ReactPPD.Controllers
         }
 
         [HttpPost("CostCenterType")]
-        public async Task<ActionResult<IEnumerable<TmGcmtype>>> GetTmGcmtype(string Descn)
+        public async Task<ActionResult<List<Gcmtype>>> GetTmGcmtype(string Descn)
         {
             try
             {
@@ -211,7 +211,7 @@ namespace ReactPPD.Controllers
                 {
                     var tmGcmtypes = await _context.TmGcmtype                                       
                                        .OrderBy(i => i.Descn)
-                                       .Select(i => new TmGcmtype { GcmType = i.GcmType, Descn = i.Descn })
+                                       .Select(i => new Gcmtype { GcmType = i.GcmType, Descn = i.Descn })
                                        .ToListAsync();
 
 
@@ -232,7 +232,7 @@ namespace ReactPPD.Controllers
                     var tmGcmtypes = await _context.TmGcmtype
                                      .Where(i => i.Descn.StartsWith(Descn))                                      
                                      .OrderBy(i => i.Descn)
-                                     .Select(i => new TmGcmtype { GcmType = i.GcmType, Descn = i.Descn })
+                                     .Select(i => new Gcmtype { GcmType = i.GcmType, Descn = i.Descn })
                                      .ToListAsync();
 
 
@@ -257,13 +257,28 @@ namespace ReactPPD.Controllers
         }
 
         [HttpPost("ViewCostCenter")]
-        public async Task<ActionResult<IEnumerable<TmCostcenter>>> ViewTmCostcenter(string CcCode)
+        public async Task<ActionResult<List<CostCenter>>> ViewTmCostcenter(string CcCode)
         {
             try
             {
                 var tmCostcenter = await _context.TmCostcenter
-                                  .Where(i => i.CcCode == CcCode)
-                                  .Select(i => i).ToListAsync();
+                                   .Join(_context.TmCostcenter,A => A.PrtCcCode, B => B.CcCode,(A,B) => new { TmCostcenter = A ,B})
+                                   .Join(_context.TmCostcenter,A => A.TmCostcenter.GprtCcCode ,C => C.CcCode,(A,C) => new {TmCostcenter = A,C })
+                                   .Join(_context.TmGcm, A => A.TmCostcenter.TmCostcenter.CcType, D => D.GcmType,(A,D) => new {TmCostcenter =A,TmGcm =D })                                  
+                                   .Where(i => i.TmCostcenter.TmCostcenter.TmCostcenter.CcCode == CcCode && i.TmGcm.GcmType.StartsWith("CTM"))
+                                  .Select(i => new CostCenter
+                                  { 
+                                    CcCode = i.TmCostcenter.TmCostcenter.TmCostcenter.CcCode,
+                                    CcName = i.TmCostcenter.TmCostcenter.TmCostcenter.CcName,
+                                    PrtCcCode = i.TmCostcenter.TmCostcenter.TmCostcenter.PrtCcCode,
+                                    PrtccName = i.TmCostcenter.TmCostcenter.B.CcName,
+                                    GprtCcCode = i.TmCostcenter.TmCostcenter.TmCostcenter.GprtCcCode,
+                                    GprtCcName = i.TmCostcenter.C.CcName,
+                                    CcType = i.TmCostcenter.TmCostcenter.TmCostcenter.CcType,
+                                    Descn = i.TmGcm.GcmDesc,
+                                    RegionCode =i.TmCostcenter.TmCostcenter.TmCostcenter.RegionCode,
+                                    IsActive =i.TmCostcenter.TmCostcenter.TmCostcenter.IsActive
+                                   }).ToListAsync();
                 if (tmCostcenter.Count == 0)
                 {
                     var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
@@ -283,127 +298,109 @@ namespace ReactPPD.Controllers
         }
 
         [HttpPost("SaveUpdate")]
-        public async Task<ActionResult<Response>> PostTmCostcenter(string CcCode,TmCostcenter tmCostcenter)
+        public async Task<ActionResult<Response>> PostTmCostcenter(CostCenter tmCostcenterview)
         {
-            if (CcCode != tmCostcenter.CcCode)
+            var tmCostcenter = await _context.TmCostcenter.FindAsync(tmCostcenterview.CcCode);
+            TmCostcenter newtmCostcenter = new TmCostcenter();
+            if(tmCostcenter == null)
             {
-                _context.TmCostcenter.Add(tmCostcenter);
+                newtmCostcenter.CcCode = tmCostcenterview.CcCode;
+                newtmCostcenter.CcName = tmCostcenterview.CcName;
+                newtmCostcenter.PrtCcCode = tmCostcenterview.PrtCcCode;
+                newtmCostcenter.GprtCcCode = tmCostcenterview.GprtCcCode;
+                newtmCostcenter.CcType = tmCostcenterview.CcType;
+                newtmCostcenter.IsActive = tmCostcenterview.IsActive;
+                newtmCostcenter.RegionCode = tmCostcenterview.RegionCode;
+                _context.TmCostcenter.Add(newtmCostcenter);
                 try
                 {
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateException)
                 {
-                    if (TmCostcenterExists(tmCostcenter.CcCode))
-                    {                       
-                        return new Response {Status = "Conflict",Message= "Record Already Exist" };
+                    if (TmCostcenterExists(tmCostcenterview.CcCode))
+                    {
+                        return new Response { Status = "Conflict", Message = "Record Already Exist" };
                     }
                 }
                 return new Response { Status = "SUCCESSFULL", Message = "SAVED SUCCESSFULLY" };
-                
             }
-            else if (CcCode == tmCostcenter.CcCode)
+            if(tmCostcenter != null)
             {
-               /* {
-                    return BadRequest();
-                }*/
-
-                _context.Entry(tmCostcenter).State = EntityState.Modified;
-
+                tmCostcenter.CcName = tmCostcenterview.CcName;
+                tmCostcenter.PrtCcCode = tmCostcenterview.PrtCcCode;
+                tmCostcenter.GprtCcCode = tmCostcenterview.GprtCcCode;
+                tmCostcenter.CcType = tmCostcenterview.CcType;
+                tmCostcenter.IsActive = tmCostcenterview.IsActive;
+                tmCostcenter.RegionCode = tmCostcenterview.RegionCode;
                 try
                 {
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TmCostcenterExists(CcCode))
+                    if (!TmCostcenterExists(tmCostcenter.CcCode))
                     {
-                       
+
                         return new Response { Status = "NotFound", Message = "Record Not Found" };
                     }
-                   /* else
-                    {
-                        throw;
-                    }*/
+                    
                 }
-                                
+
                 return new Response { Status = "Updated", Message = "Record Updated Sucessfull" };
             }
             return null;
         }
-        // PUT: api/TmCostcenters/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTmCostcenter(string id, TmCostcenter tmCostcenter)
-        {
-            if (id != tmCostcenter.CcCode)
-            {
-                return BadRequest();
-            }
 
-            _context.Entry(tmCostcenter).State = EntityState.Modified;
+        //[HttpPost("SaveUpdate")]
+        //public async Task<ActionResult<Response>> PostTmCostcenter(string CcCode,TmCostcenter tmCostcenter)
+        //{
+        //    if (CcCode != tmCostcenter.CcCode)
+        //    {
+        //        _context.TmCostcenter.Add(tmCostcenter);
+        //        try
+        //        {
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateException)
+        //        {
+        //            if (TmCostcenterExists(tmCostcenter.CcCode))
+        //            {                       
+        //                return new Response {Status = "Conflict",Message= "Record Already Exist" };
+        //            }
+        //        }
+        //        return new Response { Status = "SUCCESSFULL", Message = "SAVED SUCCESSFULLY" };
+                
+        //    }
+        //    else if (CcCode == tmCostcenter.CcCode)
+        //    {
+        //       /* {
+        //            return BadRequest();
+        //        }*/
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TmCostcenterExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //        _context.Entry(tmCostcenter).State = EntityState.Modified;
 
-            return NoContent();
-        }
-
-        // POST: api/TmCostcenters
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-       /* [HttpPost]
-        public async Task<ActionResult<TmCostcenter>> PostTmCostcenter(TmCostcenter tmCostcenter)
-        {
-            _context.TmCostcenter.Add(tmCostcenter);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (TmCostcenterExists(tmCostcenter.CcCode))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return CreatedAtAction("GetTmCostcenter", new { id = tmCostcenter.CcCode }, tmCostcenter);
-        }*/
-
-        // DELETE: api/TmCostcenters/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<TmCostcenter>> DeleteTmCostcenter(string id)
-        {
-            var tmCostcenter = await _context.TmCostcenter.FindAsync(id);
-            if (tmCostcenter == null)
-            {
-                return NotFound();
-            }
-
-            _context.TmCostcenter.Remove(tmCostcenter);
-            await _context.SaveChangesAsync();
-
-            return tmCostcenter;
-        }
+        //        try
+        //        {
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            if (!TmCostcenterExists(CcCode))
+        //            {
+                       
+        //                return new Response { Status = "NotFound", Message = "Record Not Found" };
+        //            }
+        //           /* else
+        //            {
+        //                throw;
+        //            }*/
+        //        }
+                                
+        //        return new Response { Status = "Updated", Message = "Record Updated Sucessfull" };
+        //    }
+        //    return null;
+        //}       
 
         private bool TmCostcenterExists(string id)
         {
