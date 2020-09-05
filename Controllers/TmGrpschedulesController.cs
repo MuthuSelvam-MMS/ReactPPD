@@ -192,7 +192,7 @@ namespace ReactPPD.Controllers
                 {
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateException)
+                catch (DbUpdateException ex)
                 {
                     if (TmGrpscheduleExists(tmGrpschedule.SchNo))
                     {
@@ -201,7 +201,7 @@ namespace ReactPPD.Controllers
                     }
                     else
                     {
-                        return new Response { Status = "Error", Message = "Missing Some Input Feilds" };
+                        return new Response { Status = "Error", Message = ex.Message.ToString() };
                     }
                 }
                 return new Response { Status = "SUCCESSFULL", Message = "SAVED SUCCESSFULLY" };
@@ -217,7 +217,7 @@ namespace ReactPPD.Controllers
                 {
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException ex)
                 {
                     if (!TmGrpscheduleExists(grpSchedule.SchNo))
                     {                        
@@ -225,7 +225,7 @@ namespace ReactPPD.Controllers
                     }
                     else
                     {
-                        return new Response { Status = "Not Allowed", Message = "Update Not Allowed" };
+                        return new Response { Status = "Error", Message = ex.Message.ToString() };
                     }
 
                 }               
