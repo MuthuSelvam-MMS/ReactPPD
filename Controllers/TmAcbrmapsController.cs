@@ -528,110 +528,121 @@ namespace ReactPPD.Controllers
                 return BadRequest(new { Message = ex.Response.ReasonPhrase });
             }
         }
-        // PUT: api/TmAcbrmaps/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTmAcbrmap(string id, TmAcbrmap tmAcbrmap)
-        {
-            if (id != tmAcbrmap.BranchCode)
-            {
-                return BadRequest();
-            }
 
-            _context.Entry(tmAcbrmap).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TmAcbrmapExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/TmAcbrmaps
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost("SaveUpdate")]
-        public async Task<ActionResult<Response>> PostTmAcBrMap(string accountcode,TmAcbrmap tmacbrmap)
+        public async Task<ActionResult<Response>> PostTmAcBrMap(AccountBrMap[] tmacbrmapview)
         {
-            if ( accountcode != tmacbrmap.AccountCode)
+           foreach(var acbrmap in tmacbrmapview)
             {
-                _context.TmAcbrmap.Add(tmacbrmap);
-                try
+                var tmacbrmap = await _context.TmAcbrmap.Where(x => x.BranchCode == acbrmap.BranchCode && x.AccountCode == acbrmap.AccountCode).FirstOrDefaultAsync();
+                TmAcbrmap newacbrmap = new TmAcbrmap();
+                if(tmacbrmap == null)
                 {
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateException)
-                {
-                    if (TmAcbrmapExists(tmacbrmap.AccountCode))
+                    newacbrmap.BranchCode = acbrmap.BranchCode;
+                    newacbrmap.AccountCode = acbrmap.AccountCode;
+                    newacbrmap.IsBudgetable = acbrmap.IsBudgetable;
+                    newacbrmap.IsActive = acbrmap.IsActive;
+                    newacbrmap.BrShortName = acbrmap.BrShortName;
+                    newacbrmap.AccountName = acbrmap.AccountName;
+                    newacbrmap.Actype = acbrmap.AcType;
+                    _context.TmAcbrmap.Add(newacbrmap);
+                    try
                     {
-                        return new Response { Status = "Conflict", Message = "Record Already Exist" };
+                        await _context.SaveChangesAsync();
                     }
-                }
-                return new Response { Status = "SUCCESSFULL", Message = "SAVED SUCCESSFULLY" };
-
-            }
-            else if (accountcode == tmacbrmap.AccountCode)
-            {
-               /* TmAcbrmap newAcbrmap = new TmAcbrmap();
-                newAcbrmap.BranchCode = tmacbrmap.BranchCode;
-                newAcbrmap.AccountCode = tmacbrmap.AccountCode;
-                newAcbrmap.IsBudgetable = tmacbrmap.IsBudgetable;
-                newAcbrmap.IsActive = tmacbrmap.IsActive;*/
-                _context.Entry(tmacbrmap).State = EntityState.Modified;
-
-                try
-                {
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TmAcbrmapExists(accountcode))
+                    catch (DbUpdateException ex)
                     {
-
-                        return new Response { Status = "NotFound", Message = "Record Not Found" };
+                        if (TmAcbrmapExists(acbrmap.BranchCode,acbrmap.AccountCode))
+                        {
+                            return new Response { Status = "Conflict", Message = "Record Already Exist" };
+                        }
+                        else 
+                        {
+                            return new Response { Status = "Error", Message = ex.Message.ToString()};
+                        }
                     }
-                    /* else
-                     {
-                         throw;
-                     }*/
+                    return new Response { Status = "SUCCESSFULL", Message = "SAVED SUCCESSFULLY" };
                 }
+                if(tmacbrmap != null)
+                {
+                    tmacbrmap.IsBudgetable = acbrmap.IsBudgetable;
+                    tmacbrmap.IsActive = acbrmap.IsActive;
+                    try
+                    {
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException ex)
+                    {
+                        if (!TmAcbrmapExists(acbrmap.BranchCode,acbrmap.AccountCode))
+                        {
 
-                return new Response { Status = "Updated", Message = "Record Updated Sucessfull" };
+                            return new Response { Status = "NotFound", Message = "Record Not Found" };
+                        }
+                       
+                         {
+                            return new Response { Status = "Error", Message = ex.Message.ToString()};
+                        }
+                    }
+
+                    return new Response { Status = "Updated", Message = "Record Updated Sucessfull" };
+                }
             }
             return null;
-        }
-        // DELETE: api/TmAcbrmaps/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<TmAcbrmap>> DeleteTmAcbrmap(string id)
+        }       
+
+        //[HttpPost("SaveUpdate")]
+        //public async Task<ActionResult<Response>> PostTmAcBrMap(string accountcode,TmAcbrmap tmacbrmap)
+        //{
+        //    if ( accountcode != tmacbrmap.AccountCode)
+        //    {
+        //        _context.TmAcbrmap.Add(tmacbrmap);
+        //        try
+        //        {
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateException)
+        //        {
+        //            if (TmAcbrmapExists(tmacbrmap.AccountCode))
+        //            {
+        //                return new Response { Status = "Conflict", Message = "Record Already Exist" };
+        //            }
+        //        }
+        //        return new Response { Status = "SUCCESSFULL", Message = "SAVED SUCCESSFULLY" };
+
+        //    }
+        //    else if (accountcode == tmacbrmap.AccountCode)
+        //    {
+        //       /* TmAcbrmap newAcbrmap = new TmAcbrmap();
+        //        newAcbrmap.BranchCode = tmacbrmap.BranchCode;
+        //        newAcbrmap.AccountCode = tmacbrmap.AccountCode;
+        //        newAcbrmap.IsBudgetable = tmacbrmap.IsBudgetable;
+        //        newAcbrmap.IsActive = tmacbrmap.IsActive;*/
+        //        _context.Entry(tmacbrmap).State = EntityState.Modified;
+
+        //        try
+        //        {
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            if (!TmAcbrmapExists(accountcode))
+        //            {
+
+        //                return new Response { Status = "NotFound", Message = "Record Not Found" };
+        //            }
+        //            /* else
+        //             {
+        //                 throw;
+        //             }*/
+        //        }
+
+        //        return new Response { Status = "Updated", Message = "Record Updated Sucessfull" };
+        //    }
+        //    return null;
+        //}       
+        private bool TmAcbrmapExists(string id,string accid)
         {
-            var tmAcbrmap = await _context.TmAcbrmap.FindAsync(id);
-            if (tmAcbrmap == null)
-            {
-                return NotFound();
-            }
-
-            _context.TmAcbrmap.Remove(tmAcbrmap);
-            await _context.SaveChangesAsync();
-
-            return tmAcbrmap;
-        }
-
-        private bool TmAcbrmapExists(string id)
-        {
-            return _context.TmAcbrmap.Any(e => e.BranchCode == id);
+            return _context.TmAcbrmap.Any(e => e.BranchCode == id && e.AccountCode == accid);
         }
     }
 }

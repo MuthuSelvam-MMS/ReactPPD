@@ -159,7 +159,9 @@ namespace ReactPPD.Controllers
                                   AccountCode = m.TmVendor.TmAccounts.AccountCode,
                                   AccountName = m.TmVendor.TmAccounts.AccountName,
                                   ItemCode = m.TmVendor.TmVendor.ItemCode,
-                                  ItemName = m.TmItem.ItemName
+                                  ItemName = m.TmItem.ItemName,
+                                  IsActive = m.TmVendor.TmVendor.IsActive,
+                                  PurType = m.TmVendor.TmVendor.PurType
                               }).ToListAsync();
                 List<VendorItem> vendoritems = new List<VendorItem>();
                 foreach (var items in tmVendor)
@@ -169,7 +171,9 @@ namespace ReactPPD.Controllers
                         AccountCode = items.AccountCode.ToString(),
                         AccountName = items.AccountName.ToString(),
                         ItemCode = items.ItemCode.ToString(),
-                        ItemName = items.ItemName.ToString()
+                        ItemName = items.ItemName.ToString(),
+                        IsActive = items.IsActive.ToString(),
+                        PurType = items.PurType.ToString()
                     });
                 }
 
@@ -191,82 +195,65 @@ namespace ReactPPD.Controllers
             }
         }
         [HttpPost("SaveData")]
-        public async Task<ActionResult<Response>> PostTmVendor(TmVendor tmVendor)
+        public async Task<ActionResult<Response>> PostTmVendor(VendorItem tmVendorview)
         {
-            _context.TmVendor.Add(tmVendor);
-            try
+            var tmVendor = await _context.TmVendor.Where(x => x.AccountCode == tmVendorview.AccountCode && x.ItemCode == tmVendorview.ItemCode).FirstOrDefaultAsync();
+            TmVendor newtmVendor = new TmVendor();
+            if(tmVendor == null)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (TmVendorExists(tmVendor.AccountCode))
+                newtmVendor.AccountCode = tmVendorview.AccountCode;
+                newtmVendor.ItemCode = tmVendorview.ItemCode;
+                newtmVendor.IsActive = tmVendorview.IsActive;
+                newtmVendor.PurType = tmVendorview.PurType;
+                _context.TmVendor.Add(newtmVendor);
+                try
                 {
-                    // return Conflict();
-                    return new Response { Status = "Conflict", Message = "Record Already Exist" };
+                    await _context.SaveChangesAsync();
                 }
-                else
+                catch (DbUpdateException ex)
                 {
-                    throw;
+                    if (TmVendorExists(tmVendor.AccountCode))
+                    {
+                        
+                        return new Response { Status = "Conflict", Message = "Record Already Exist" };
+                    }
+                    else
+                    {
+                        return new Response { Status = "Error", Message = ex.Message.ToString() };
+                    }
                 }
-            }
 
-            return new Response { Status = "SUCCESSFULL", Message = "SAVED SUCCESSFULLY" };
+                return new Response { Status = "SUCCESSFULL", Message = "SAVED SUCCESSFULLY" };
+            }
+            if(tmVendor != null)
+            {
+                return new Response { Status = "Conflict", Message = "Record Already Exist" };
+            }
+            return null;
         }
+        //[HttpPost("SaveData")]
+        //public async Task<ActionResult<Response>> PostTmVendor(TmVendor tmVendor)
+        //{
+        //    _context.TmVendor.Add(tmVendor);
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateException)
+        //    {
+        //        if (TmVendorExists(tmVendor.AccountCode))
+        //        {
+        //            // return Conflict();
+        //            return new Response { Status = "Conflict", Message = "Record Already Exist" };
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-        // PUT: api/TmVendors/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTmVendor(string id, TmVendor tmVendor)
-        {
-            if (id != tmVendor.AccountCode)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(tmVendor).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TmVendorExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/TmVendors
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-      
-
-        // DELETE: api/TmVendors/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<TmVendor>> DeleteTmVendor(string id)
-        {
-            var tmVendor = await _context.TmVendor.FindAsync(id);
-            if (tmVendor == null)
-            {
-                return NotFound();
-            }
-
-            _context.TmVendor.Remove(tmVendor);
-            await _context.SaveChangesAsync();
-
-            return tmVendor;
-        }
-
+        //    return new Response { Status = "SUCCESSFULL", Message = "SAVED SUCCESSFULLY" };
+        //}       
         private bool TmVendorExists(string id)
         {
             return _context.TmVendor.Any(e => e.AccountCode == id);

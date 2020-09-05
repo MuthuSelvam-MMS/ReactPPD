@@ -11,5 +11,8 @@ namespace ReactPPD.VM
         public string AccountName { get; set; }
         public string ItemCode { get; set; }
         public string ItemName { get; set; }
+        public string IsActive { get; set; }
+        public string PurType { get; set; }
+
     }
 }

@@ -365,7 +365,7 @@ namespace ReactPPD.Controllers
         [HttpPost("SaveUpdate")]
         public async Task<ActionResult<Response>> PostTmReason(Reason tmReason)
         {
-            var reason = _context.TmReason.Where(x => x.ReasonCode == tmReason.ReasonCode).FirstOrDefault();
+            var reason = await _context.TmReason.Where(x =>x.BranchCode == tmReason.BranchCode && x.ReasonCode == tmReason.ReasonCode && x.DocType == tmReason.DocType).FirstOrDefaultAsync();
             TmReason newtmreason = new TmReason();
             if(reason == null)
             {
