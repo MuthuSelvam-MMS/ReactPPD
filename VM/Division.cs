@@ -9,5 +9,6 @@ namespace ReactPPD.VM
     {
         public string DivCode { get; set; }
         public string DivName { get; set; }
+        public string ShortName { get; set; }
     }
 }

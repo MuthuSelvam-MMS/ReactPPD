@@ -31,7 +31,7 @@ namespace ReactPPD.Model
         [StringLength(10)]
         public string CountryCode { get; set; }
         [Required]
-        [StringLength(10)]
+        [StringLength(40)]
         public string CountryName { get; set; }
         [Required]
         [StringLength(10)]

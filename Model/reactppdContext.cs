@@ -6,7 +6,7 @@ namespace ReactPPD.Model
 {
     public partial class reactppdContext : DbContext
     {
-        
+       
         public reactppdContext(DbContextOptions<reactppdContext> options)
             : base(options)
         {
@@ -55,9 +55,11 @@ namespace ReactPPD.Model
         public virtual DbSet<TmUserdefault> TmUserdefault { get; set; }
         public virtual DbSet<TmUserdivmap> TmUserdivmap { get; set; }
         public virtual DbSet<TmUserright> TmUserright { get; set; }
+        public virtual DbSet<TmVehicle> TmVehicle { get; set; }
         public virtual DbSet<TmVendor> TmVendor { get; set; }
         public virtual DbSet<TmZone> TmZone { get; set; }
-        public virtual DbSet<TtShedready> TtShedready { get; set; }        
+        public virtual DbSet<TtShedready> TtShedready { get; set; }
+          
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -3363,6 +3365,41 @@ namespace ReactPPD.Model
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("UserRightUserId");
+            });
+
+            modelBuilder.Entity<TmVehicle>(entity =>
+            {
+                entity.HasKey(e => e.VehCode)
+                    .HasName("PRIMARY");
+
+                entity.HasIndex(e => e.RegionCode)
+                    .HasName("FK_VehicleReg");
+
+                entity.HasIndex(e => new { e.VehNo, e.DivCode, e.RegionCode })
+                    .HasName("UK_VehicleNoDivReg")
+                    .IsUnique();
+
+                entity.Property(e => e.VehCode).IsUnicode(false);
+
+                entity.Property(e => e.DivCode).IsUnicode(false);
+
+                entity.Property(e => e.IsActive)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'A'");
+
+                entity.Property(e => e.MakeName).IsUnicode(false);
+
+                entity.Property(e => e.RegionCode).IsUnicode(false);
+
+                entity.Property(e => e.VehNo).IsUnicode(false);
+
+                entity.Property(e => e.VehType).IsUnicode(false);
+
+                entity.HasOne(d => d.RegionCodeNavigation)
+                    .WithMany(p => p.TmVehicle)
+                    .HasForeignKey(d => d.RegionCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_VehicleReg");
             });
 
             modelBuilder.Entity<TmVendor>(entity =>

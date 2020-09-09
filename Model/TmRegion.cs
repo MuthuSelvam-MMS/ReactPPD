@@ -14,6 +14,7 @@ namespace ReactPPD.Model
             TmRegionmap = new HashSet<TmRegionmap>();
             TmUser = new HashSet<TmUser>();
             TmUserdefault = new HashSet<TmUserdefault>();
+            TmVehicle = new HashSet<TmVehicle>();
             TmZone = new HashSet<TmZone>();
         }
 
@@ -52,6 +53,8 @@ namespace ReactPPD.Model
         public virtual ICollection<TmUser> TmUser { get; set; }
         [InverseProperty("RegionCodeNavigation")]
         public virtual ICollection<TmUserdefault> TmUserdefault { get; set; }
+        [InverseProperty("RegionCodeNavigation")]
+        public virtual ICollection<TmVehicle> TmVehicle { get; set; }
         [InverseProperty("RegionCodeNavigation")]
         public virtual ICollection<TmZone> TmZone { get; set; }
     }
