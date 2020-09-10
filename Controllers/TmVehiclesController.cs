@@ -245,7 +245,16 @@ namespace ReactPPD.Controllers
                                    RegionName = i.TmVehicle.TmRegion.RegionName,
                                    IsActive = i.TmVehicle.TmVehicle.TmVehicle.IsActive
                                 }).ToListAsync();
-                return null;
+                if (tmVehicle.Count == 0)
+                {
+                    var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                    {
+                        Content = new StringContent(string.Format("No Vehicle with No = {0}", Vehiclecode)),
+                        ReasonPhrase = "Vehicle Not Found"
+                    };
+                    throw new System.Web.Http.HttpResponseException(resp);
+                }
+                return tmVehicle;
             }
             catch (System.Web.Http.HttpResponseException ex)
             {
